@@ -30,7 +30,6 @@ gboolean sphinx_gui_listen(sphinx_gui_listen_t *listen_stuff) {
 
 	pipe(pfd);
 	dup2(pfd[1], 1);
-	dup2(pfd[1], 2);
 
 	listen_stuff->fd = pfd[0]; 
 
@@ -94,6 +93,7 @@ gboolean sphinx_gui_listen_timeout(gpointer arg) {
 	GtkTreeIter *iter;
 
 	if (readtonl(listen_stuff->fd, buf, sizeof(buf))) {
+		fprintf(stderr, "%s\n", buf);
 		if (!strncasecmp(buf, "READY", 5))
 			gtk_image_set_from_stock(
 					GTK_IMAGE(listen_stuff->status),
