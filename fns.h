@@ -21,3 +21,4 @@ void sphinx_gui_list_remove(GtkWidget*, gpointer);
 GtkWidget *sphinx_gui_menu_bar_new();
 gboolean sphinx_gui_listen(sphinx_gui_listen_t*);
 gboolean sphinx_gui_listen_timeout(gpointer);
+void* sphinx_gui_listen_main(void*);

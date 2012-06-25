@@ -1,3 +1,3 @@
 http://eli.neoturbine.net/pictures/pslauncher.png
 
-requires pocketsphinx_continuous
+requires pocketsphinx (and sphinxbase and gtk+-3.0)
