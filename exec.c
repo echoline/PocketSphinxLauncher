@@ -29,16 +29,12 @@ gboolean sphinx_gui_listen(sphinx_gui_listen_t *listen_stuff) {
 	int pfd[2];
 
 	pipe(pfd);
-	dup2(pfd[1], 1);
-
 	listen_stuff->fd = pfd[0]; 
 
 	val = fcntl(listen_stuff->fd, F_GETFL, 0); 
 	fcntl(listen_stuff->fd, F_SETFL, val | O_NONBLOCK);
 
-	val = pthread_create(&thread, NULL, sphinx_gui_listen_main, NULL);
-
-	printf("listener thread creation returned %d\n", val);
+	pthread_create(&thread, NULL, sphinx_gui_listen_main, (void*)pfd[1]);
 
 	return TRUE;
 }

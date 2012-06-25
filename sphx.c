@@ -229,7 +229,7 @@ sleep_msec(int32 ms)
  *     }
  */
 static void
-recognize_from_microphone()
+recognize_from_microphone(int outfd)
 {
     ad_rec_t *ad;
     int16 adbuf[4096];
@@ -237,7 +237,7 @@ recognize_from_microphone()
     char const *hyp;
     char const *uttid;
     cont_ad_t *cont;
-    char word[256];
+    char word[4096];
 
     if ((ad = ad_open_dev(cmd_ln_str_r(config, "-adcdev"),
                           (int)cmd_ln_float32_r(config, "-samprate"))) == NULL)
@@ -253,8 +253,9 @@ recognize_from_microphone()
 
     for (;;) {
         /* Indicate listening for next utterance */
-        printf("READY....\n");
-        fflush(stdout);
+	write(outfd, "READY\n", 6);
+        //printf("READY....\n");
+        //fflush(stdout);
         fflush(stderr);
 
         /* Wait data for next utterance */
@@ -271,8 +272,9 @@ recognize_from_microphone()
         if (ps_start_utt(ps, NULL) < 0)
             E_FATAL("Failed to start utterance\n");
         ps_process_raw(ps, adbuf, k, FALSE, FALSE);
-        printf("Listening...\n");
-        fflush(stdout);
+	write(outfd, "Listening\n", 10);
+        //printf("Listening...\n");
+        //fflush(stdout);
 
         /* Note timestamp for this first block of data */
         ts = cont->read_ts;
@@ -313,13 +315,14 @@ recognize_from_microphone()
         while (ad_read(ad, adbuf, 4096) >= 0);
         cont_ad_reset(cont);
 
-        printf("Stopped listening, please wait...\n");
-        fflush(stdout);
+        //printf("Stopped listening, please wait...\n");
+        //fflush(stdout);
         /* Finish decoding, obtain and print result */
         ps_end_utt(ps);
         hyp = ps_get_hyp(ps, NULL, &uttid);
-        printf("%s: %s\n", uttid, hyp);
-        fflush(stdout);
+        snprintf(word, sizeof(word)-1, "%s: %s\n", uttid, hyp);
+        //fflush(stdout);
+	write(outfd, word, strlen(word));
 
         /* Exit if the first word spoken was GOODBYE */
 /*        if (hyp) {
@@ -347,6 +350,7 @@ sighandler(int signo)
 void*
 sphinx_gui_listen_main(void *arg)
 {
+    int outfd = (int)arg;
     char const *cfg;
 
 /*    if (argc == 2) {
@@ -380,7 +384,7 @@ sphinx_gui_listen_main(void *arg)
 #endif
 
         if (setjmp(jbuf) == 0) {
-	    recognize_from_microphone();
+	    recognize_from_microphone(outfd);
 	}
 //    }
 
