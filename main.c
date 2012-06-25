@@ -55,7 +55,7 @@ int main(int argc, char *argv[]) {
 	gtk_box_pack_start (GTK_BOX(vbox), hbox, FALSE, TRUE, 2);
 
 	hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 2);
-	listen_stuff.status = gtk_image_new_from_stock("gtk-no",
+	listen_stuff.status = gtk_image_new_from_stock("gtk-media-stop",
 							GTK_ICON_SIZE_MENU);
 	gtk_box_pack_start (GTK_BOX(hbox), listen_stuff.status, FALSE, TRUE, 2);
 	listen_stuff.label = gtk_label_new("");
@@ -69,6 +69,8 @@ int main(int argc, char *argv[]) {
 
 	gtk_widget_show_all (window);
 	gtk_main ();
+
+	g_spawn_close_pid(listen_stuff.pid);
 
 	return 0;
 }
