@@ -24,17 +24,24 @@
 #include <string.h>
 
 gboolean sphinx_gui_listen(sphinx_gui_listen_t *listen_stuff) {
-	char *argv[] = {"pocketsphinx_continuous", NULL};
+	int val;
+	pthread_t thread;
+	int pfd[2];
 
-	gboolean ret = g_spawn_async_with_pipes(NULL, argv, NULL,
-			G_SPAWN_SEARCH_PATH|G_SPAWN_STDERR_TO_DEV_NULL,
-			NULL, NULL, &listen_stuff->pid, NULL, 
-			&listen_stuff->fd, NULL, NULL);
+	pipe(pfd);
+	dup2(pfd[1], 1);
+	dup2(pfd[1], 2);
 
-	int val = fcntl(listen_stuff->fd, F_GETFL, 0); 
+	listen_stuff->fd = pfd[0]; 
+
+	val = fcntl(listen_stuff->fd, F_GETFL, 0); 
 	fcntl(listen_stuff->fd, F_SETFL, val | O_NONBLOCK);
 
-	return ret;
+	val = pthread_create(&thread, NULL, sphinx_gui_listen_main, NULL);
+
+	printf("listener thread creation returned %d\n", val);
+
+	return TRUE;
 }
 
 static gboolean readtonl(gint listenfd, char *buf, size_t buf_sz) {
