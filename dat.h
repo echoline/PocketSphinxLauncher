@@ -21,4 +21,7 @@ typedef struct {
 	GtkWidget *status;
 	GtkWidget *label;
 	GtkWidget *list;
+	GtkWidget *window;
+	gboolean visible;
+	GtkStatusIcon *tray;
 } sphinx_gui_listen_t;

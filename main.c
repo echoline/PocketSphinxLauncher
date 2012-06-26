@@ -18,8 +18,15 @@
 #include "dat.h"
 #include "fns.h"
 
+void sphinx_gui_visibility(GtkStatusIcon *status_icon, gpointer user_data) {
+	sphinx_gui_listen_t *listen_stuff = (sphinx_gui_listen_t*)user_data;
+
+	listen_stuff->visible = !listen_stuff->visible;
+
+	gtk_widget_set_visible(listen_stuff->window, listen_stuff->visible);
+}
+
 int main(int argc, char *argv[]) {
-	GtkWidget *window;
 	GtkWidget *vbox;
 	GtkWidget *hbox;
 	GtkWidget *text;
@@ -29,13 +36,13 @@ int main(int argc, char *argv[]) {
 
 	gtk_init (&argc, &argv);
 
-	window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-	g_signal_connect (window, "destroy", gtk_main_quit, NULL);
-	gtk_widget_set_size_request(window, 640, 240);
+	listen_stuff.window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+	g_signal_connect (listen_stuff.window, "destroy", gtk_main_quit, NULL);
+	gtk_widget_set_size_request(listen_stuff.window, 640, 240);
 
 	vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 2);
 	gtk_container_set_border_width (GTK_CONTAINER (vbox), 3);
-	gtk_container_add (GTK_CONTAINER (window), vbox);
+	gtk_container_add (GTK_CONTAINER (listen_stuff.window), vbox);
 
 	scrolled = gtk_scrolled_window_new(NULL, NULL);
 	listen_stuff.list = sphinx_gui_list_new();
@@ -62,12 +69,17 @@ int main(int argc, char *argv[]) {
 	gtk_box_pack_start (GTK_BOX(hbox), listen_stuff.label, FALSE, TRUE, 2);
 	gtk_box_pack_start (GTK_BOX(vbox), hbox, FALSE, TRUE, 2);
 
+	listen_stuff.tray = gtk_status_icon_new_from_stock("gtk-media-stop");
+	g_signal_connect(listen_stuff.tray, "activate",
+			G_CALLBACK(sphinx_gui_visibility), &listen_stuff);
+
 	if (!sphinx_gui_listen(&listen_stuff))
 		return -1;
 
 	g_timeout_add(1, &sphinx_gui_listen_timeout, &listen_stuff);
 
-	gtk_widget_show_all (window);
+	listen_stuff.visible = TRUE;
+	gtk_widget_show_all (listen_stuff.window);
 	gtk_main ();
 
 	g_spawn_close_pid(listen_stuff.pid);

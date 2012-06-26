@@ -90,15 +90,19 @@ gboolean sphinx_gui_listen_timeout(gpointer arg) {
 
 	if (readtonl(listen_stuff->fd, buf, sizeof(buf))) {
 		fprintf(stderr, "%s\n", buf);
-		if (!strncasecmp(buf, "READY", 5))
+		if (!strncasecmp(buf, "READY", 5)) {
 			gtk_image_set_from_stock(
 					GTK_IMAGE(listen_stuff->status),
 					"gtk-media-pause", GTK_ICON_SIZE_MENU);
-		else if (!strncasecmp(buf, "Listening", 9))
+			gtk_status_icon_set_from_stock(
+					listen_stuff->tray, "gtk-media-pause");
+		} else if (!strncasecmp(buf, "Listening", 9)) {
 			gtk_image_set_from_stock(
 					GTK_IMAGE(listen_stuff->status),
 					"gtk-media-record", GTK_ICON_SIZE_MENU);
-		else if (isdigit(buf[0])) {
+			gtk_status_icon_set_from_stock(
+					listen_stuff->tray, "gtk-media-record");
+		} else if (isdigit(buf[0])) {
 			ptr = strchr(buf, ' ');
 			if (ptr != NULL) {
 				ptr++;
