@@ -62,14 +62,14 @@ int main(int argc, char *argv[]) {
 	gtk_box_pack_start (GTK_BOX(vbox), hbox, FALSE, TRUE, 2);
 
 	hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 2);
-	listen_stuff.status = gtk_image_new_from_stock("gtk-media-stop",
+	listen_stuff.status = gtk_image_new_from_stock("gtk-no",
 							GTK_ICON_SIZE_MENU);
 	gtk_box_pack_start (GTK_BOX(hbox), listen_stuff.status, FALSE, TRUE, 2);
 	listen_stuff.label = gtk_label_new("");
 	gtk_box_pack_start (GTK_BOX(hbox), listen_stuff.label, FALSE, TRUE, 2);
 	gtk_box_pack_start (GTK_BOX(vbox), hbox, FALSE, TRUE, 2);
 
-	listen_stuff.tray = gtk_status_icon_new_from_stock("gtk-media-stop");
+	listen_stuff.tray = gtk_status_icon_new_from_stock("gtk-no");
 	g_signal_connect(listen_stuff.tray, "activate",
 			G_CALLBACK(sphinx_gui_visibility), &listen_stuff);
 
