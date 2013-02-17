@@ -19,12 +19,21 @@
 #include "fns.h"
 
 static void list_save(GtkTreeModel *store) {
-	gchar *conf = g_strconcat(g_get_user_config_dir(), "/pslauncher.conf",
-				NULL);
+	gchar *conf = g_strconcat(g_get_user_config_dir(),
+			"/pslauncher",
+			NULL);
 	gchar *phrase, *command;
 	gchar *contents = g_strdup("");
 	gchar *tmp;
 	GtkTreeIter iter;
+
+	g_mkdir_with_parents(conf, 0700);
+
+	g_free(conf);
+	conf = g_strconcat(g_get_user_config_dir(),
+				"/pslauncher/list.txt",
+				NULL);
+
 	if (gtk_tree_model_get_iter_first(store, &iter)) do {
 		gtk_tree_model_get(store, &iter, 0, &phrase, 1, &command, -1);
 		tmp = g_strconcat(contents, phrase, "\t", command, "\n", NULL);
@@ -42,7 +51,8 @@ static void list_save(GtkTreeModel *store) {
 }
 
 static void list_load(GtkListStore *store) {
-	gchar *conf = g_strconcat(g_get_user_config_dir(), "/pslauncher.conf",
+	gchar *conf = g_strconcat(g_get_user_config_dir(),
+				"/pslauncher/list.txt",
 				NULL);
 	gchar *contents;
 	gchar **lines;

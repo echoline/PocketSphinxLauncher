@@ -22,3 +22,4 @@ GtkWidget *sphinx_gui_menu_bar_new();
 gboolean sphinx_gui_listen(sphinx_gui_listen_t*);
 gboolean sphinx_gui_listen_timeout(gpointer);
 void* sphinx_gui_listen_main(void*);
+void sphinx_gui_configure(GtkWidget*, gpointer);
