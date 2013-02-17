@@ -19,6 +19,24 @@ void modeldir_changed (GtkEditable *editable, gpointer __unused) {
 	sphinx_gui_config_save();
 }
 
+void train_clicked (GtkButton *button, gpointer __unused) {
+	char *args[] = { "PocketSphinxTrainer", adcdev, NULL };
+	GError *error = NULL;
+	GtkWidget *window;
+
+	if (g_spawn_async(NULL, args, NULL, G_SPAWN_SEARCH_PATH, NULL, NULL,
+				NULL, &error))
+		gtk_main_quit();
+
+	window = gtk_message_dialog_new (NULL, 0, GTK_MESSAGE_ERROR,
+			GTK_BUTTONS_NONE,
+			"Unable to load trainer: %s", error->message);
+
+	g_error_free(error);
+
+	gtk_dialog_run(GTK_DIALOG(window));
+}
+
 void sphinx_gui_config_load () {
 	GKeyFile *key_file = g_key_file_new();
 	gchar *conf = g_strconcat(g_get_user_config_dir(),
@@ -98,8 +116,10 @@ void sphinx_gui_configure(GtkWidget* configbutton, gpointer __unused) {
 
 	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 1);
 	button = gtk_button_new_with_label ("Train");
+	g_signal_connect (button, "clicked", G_CALLBACK(train_clicked), NULL);
 	gtk_box_pack_start (GTK_BOX(hbox), button, FALSE, TRUE, 2);
-
+	label = gtk_label_new ("Train acoustic model to your voice");
+	gtk_box_pack_start (GTK_BOX(hbox), label, FALSE, TRUE, 2);
 	gtk_box_pack_start (GTK_BOX(vbox), hbox, FALSE, TRUE, 2);
 	gtk_container_add (GTK_CONTAINER (window), vbox);
 

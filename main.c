@@ -65,7 +65,7 @@ int main(int argc, char *argv[]) {
 						listen_stuff.list);
 	gtk_box_pack_start (GTK_BOX(vbox), scrolled, TRUE, TRUE, 2);
 
-	hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 3);
+	hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 2);
 
 	button = gtk_button_new_from_stock("gtk-add");
 	gtk_box_pack_start (GTK_BOX(hbox), button, FALSE, TRUE, 2);
@@ -75,14 +75,12 @@ int main(int argc, char *argv[]) {
 	gtk_box_pack_start (GTK_BOX(hbox), button, FALSE, TRUE, 2);
 	g_signal_connect(button, "clicked", G_CALLBACK(sphinx_gui_list_remove),
 			listen_stuff.list);
-	gtk_box_pack_start (GTK_BOX(vbox), hbox, FALSE, TRUE, 2);
 
 	listen_stuff.status = gtk_image_new_from_stock("gtk-no",
 							GTK_ICON_SIZE_MENU);
 	gtk_box_pack_start (GTK_BOX(hbox), listen_stuff.status, FALSE, TRUE, 2);
 	listen_stuff.label = gtk_label_new("");
 	gtk_box_pack_start (GTK_BOX(hbox), listen_stuff.label, TRUE, TRUE, 2);
-	gtk_box_pack_start (GTK_BOX(vbox), hbox, FALSE, TRUE, 2);
 
 	button = gtk_button_new_with_label("Configure");
 	gtk_box_pack_start (GTK_BOX(hbox), button, FALSE, TRUE, 2);
