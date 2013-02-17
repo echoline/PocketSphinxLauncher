@@ -87,9 +87,9 @@ gboolean sphinx_gui_listen_timeout(gpointer arg) {
 	sphinx_gui_listen_t *listen_stuff = arg;
 	GtkTreeModel *model;
 	GtkTreeIter *iter;
+	buf[1023] = '\n';
 
 	if (readtonl(listen_stuff->fd, buf, sizeof(buf))) {
-		fprintf(stderr, "%s\n", buf);
 		if (!strncasecmp(buf, "READY", 5)) {
 			gtk_image_set_from_stock(
 					GTK_IMAGE(listen_stuff->status),

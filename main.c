@@ -18,6 +18,9 @@
 #include "dat.h"
 #include "fns.h"
 
+char *adcdev = NULL;
+char *modeldir = "./lib/model";
+
 void sphinx_gui_visibility(GtkStatusIcon *status_icon, gpointer user_data) {
 	sphinx_gui_listen_t *listen_stuff = (sphinx_gui_listen_t*)user_data;
 
@@ -33,6 +36,16 @@ int main(int argc, char *argv[]) {
 	GtkWidget *button;
 	GtkWidget *scrolled;
 	sphinx_gui_listen_t listen_stuff;
+	int i;
+
+	for (i = 0; i < argc; i++) {
+		if (!g_strcmp0(argv[i], "-adcdev")) {
+			i++;
+
+			if (i < argc)
+				adcdev = g_strdup(argv[i]);
+		}
+	}
 
 	gtk_init (&argc, &argv);
 

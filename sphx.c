@@ -75,23 +75,8 @@
 
 #include <pocketsphinx.h>
 
-static const arg_t cont_args_def[] = {
-    POCKETSPHINX_OPTIONS,
-    /* Argument file. */
-    { "-argfile",
-      ARG_STRING,
-      NULL,
-      "Argument file giving extra arguments." },
-    { "-adcdev", 
-      ARG_STRING, 
-      NULL, 
-      "Name of audio device to use for input." },
-    { "-time", 
-      ARG_BOOLEAN, 
-      "no", 
-      "Print word times in file transcription." },
-    CMDLN_EMPTY_OPTION
-};
+extern char *adcdev;
+extern char *modeldir;
 
 static ps_decoder_t *ps;
 static cmd_ln_t *config;
@@ -132,7 +117,7 @@ recognize_from_microphone(int outfd)
     cont_ad_t *cont;
     char word[4096];
 
-    if ((ad = ad_open_dev(cmd_ln_str_r(config, "-adcdev"),
+    if ((ad = ad_open_dev(adcdev,
                           (int)cmd_ln_float32_r(config, "-samprate"))) == NULL)
         E_FATAL("Failed top open audio device\n");
 
@@ -230,13 +215,18 @@ sphinx_gui_listen_main(void *arg)
 {
     int outfd = (int)arg;
     char const *cfg;
+    char hmm[256];
+    char lm[256];
+    char dict[256];
 
-    config = cmd_ln_parse_r(NULL, cont_args_def, 0, NULL, FALSE);
+    snprintf(hmm, 256, "%s/hmm", modeldir);
+    snprintf(lm, 256, "%s/lm.DMP", modeldir);
+    snprintf(dict, 256, "%s/dict.dic", modeldir);
 
-    /* Handle argument file as -argfile. */
-    if (config && (cfg = cmd_ln_str_r(config, "-argfile")) != NULL) {
-        config = cmd_ln_parse_file_r(config, cont_args_def, cfg, FALSE);
-    }
+    config = cmd_ln_init(NULL, ps_args(), TRUE,
+			"-hmm", hmm, "-lm", lm, "-dict", dict,
+			NULL);
+
     if (config == NULL)
         return NULL;
 
