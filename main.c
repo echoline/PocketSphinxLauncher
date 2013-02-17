@@ -19,7 +19,7 @@
 #include "fns.h"
 
 char *adcdev = NULL;
-char *modeldir = "./lib/model";
+char *modeldir = NULL;
 
 void sphinx_gui_visibility(GtkStatusIcon *status_icon, gpointer user_data) {
 	sphinx_gui_listen_t *listen_stuff = (sphinx_gui_listen_t*)user_data;
@@ -48,6 +48,8 @@ int main(int argc, char *argv[]) {
 	}
 
 	gtk_init (&argc, &argv);
+
+	sphinx_gui_config_load();
 
 	listen_stuff.window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
 	g_signal_connect (listen_stuff.window, "destroy", gtk_main_quit, NULL);
