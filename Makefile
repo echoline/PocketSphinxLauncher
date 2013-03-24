@@ -21,9 +21,10 @@ clean:
 
 install: $(ALL)
 	cp PocketSphinxLauncher trainer/PocketSphinxTrainer $(INSTALLPATH)/bin
+	cp PSLauncher.sh $(INSTALLPATH)
 
 uninstall: $(ALL)
-	rm $(INSTALLPATH)/bin/PocketSphinxLauncher $(INSTALLPATH)/bin/PocketSphinxTrainer
+	rm $(INSTALLPATH)/bin/PocketSphinxLauncher $(INSTALLPATH)/bin/PocketSphinxTrainer $(INSTALLPATH)/PSLauncher.sh
 
 force:
 	true
