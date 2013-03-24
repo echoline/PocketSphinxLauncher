@@ -1,3 +1,13 @@
-http://eli.neoturbine.net/pictures/pslauncher.png
+PocketSphinxLauncher is a program for launching other programs and scripts,
+using CMU PocketSphinx voice recognition.
 
-requires pocketsphinx (and sphinxbase and gtk+-3.0)
+It was built and has been tested on Slackware Linux 14.0
+
+PSLauncher.sh launches the main program.  It can't really be moved.  If you want to install things more traditionally I suggest looking at the directory structure here and in /usr/local
+
+Requirements:
+	Gtk+-3.0 (built with 3.4.4)
+	Alsa utilities (arecord and aplay)
+	PocketSphinx and SphinxBase 0.8 (required files included)
+
+https://github.com/echoline/PocketSphinxLauncher
