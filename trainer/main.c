@@ -105,5 +105,7 @@ int main(int argc, char *argv[]) {
 	}
 	gtk_main ();
 
+	sphinx_gui_config_save();
+
 	return 0;
 }

@@ -2,7 +2,7 @@ CFLAGS=`pkg-config --cflags gtk+-3.0` -g
 LDFLAGS=`pkg-config --libs gtk+-3.0 sphinxbase pocketsphinx` -lpthread -g
 OBJS=$(patsubst %.c,%.o,$(wildcard *.c))
 ALL=PocketSphinxLauncher trainer
-INSTALLPATH=/usr/local
+INSTALLPATH=/home/eli/Documents/PSLauncher
 
 all: $(ALL)
 

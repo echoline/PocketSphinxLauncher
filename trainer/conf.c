@@ -34,11 +34,11 @@ void sphinx_gui_config_load () {
 		if (modeldir != NULL)
 			g_free(modeldir);
 
-		adcdev = g_key_file_get_string(key_file, "pslauncher",
+		adcdev = g_key_file_get_string(key_file, "pstrainer",
 						"adcdev", NULL);
-		traindir = g_key_file_get_string(key_file, "pslauncher",
+		traindir = g_key_file_get_string(key_file, "pstrainer",
 						"traindir", NULL);
-		modeldir = g_key_file_get_string(key_file, "pslauncher",
+		modeldir = g_key_file_get_string(key_file, "pstrainer",
 						"modeldir", NULL);
 	}
 
@@ -46,10 +46,10 @@ void sphinx_gui_config_load () {
 		adcdev = g_strdup("default");
 
 	if (modeldir == NULL)
-		modeldir = g_strdup("./lib/model");
+		modeldir = g_strdup(MODELDIR);
 
 	if (traindir == NULL)
-		traindir = g_strdup("./lib/train");
+		traindir = g_strdup(TRAINDIR);
 
 	g_key_file_free (key_file);
 }
@@ -69,11 +69,11 @@ void sphinx_gui_config_save () {
 				NULL);
 
 	if (adcdev != NULL)
-		g_key_file_set_string (key_file, "pslauncher", "adcdev", adcdev);
+		g_key_file_set_string (key_file, "pstrainer", "adcdev", adcdev);
 	if (traindir != NULL)
-		g_key_file_set_string (key_file, "pslauncher", "traindir", traindir);
+		g_key_file_set_string (key_file, "pstrainer", "traindir", traindir);
 	if (modeldir != NULL)
-		g_key_file_set_string (key_file, "pslauncher", "modeldir", modeldir);
+		g_key_file_set_string (key_file, "pstrainer", "modeldir", modeldir);
 
 	data = g_key_file_to_data (key_file, NULL, NULL);
 	g_file_set_contents(conf, data, -1, NULL);
