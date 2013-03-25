@@ -6,10 +6,11 @@ extern GtkWidget *playbutton;
 extern GtkWidget *stopbutton;
 extern GtkWidget *recordbutton;
 extern char *adcdev;
+extern char *wavfname;
 
 void record(GtkButton *button, gpointer __unused) {
 	gchar *args[] = { "arecord", "-D", adcdev, "-r", "16000", "-f",
-		"S16_LE", "-t", "wav", "/tmp/voicedata.wav", NULL };
+		"S16_LE", "-t", "wav", wavfname, NULL };
 	GError *error = NULL;
 
 	gtk_widget_set_sensitive (recordbutton, FALSE);
@@ -49,7 +50,7 @@ void stop(GtkButton *button, gpointer __unused) {
 }
 
 void play(GtkButton *button, gpointer __unused) {
-	gchar *args[] = { "aplay", "/tmp/voicedata.wav", NULL };
+	gchar *args[] = { "aplay", wavfname, NULL };
 	GError *error = NULL;
 
 	gtk_widget_set_sensitive (recordbutton, FALSE);
@@ -74,6 +75,8 @@ void doone(char *text) {
 	GtkWidget *hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 2);
 	GtkWidget *label, *button;
 	gchar *str;
+
+	g_signal_connect(window, "destroy", gtk_main_quit, NULL);
 
         recordbutton = gtk_button_new_from_stock (GTK_STOCK_MEDIA_RECORD);
 	g_signal_connect(recordbutton, "clicked", G_CALLBACK(record), NULL);

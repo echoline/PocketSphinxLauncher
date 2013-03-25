@@ -24,36 +24,43 @@ GtkWidget *recordbutton;
 char *adcdev = NULL;
 char *modeldir = NULL;
 char *traindir = NULL;
+
 gchar **lines;
-gint lineindex = 0;
+gchar *wavfname = NULL;
 
 void launchlauncher() {
 	char *args[] = { "PocketSphinxLauncher", "-adcdev", adcdev, NULL };
 	GError *error = NULL;
 
 	if (g_spawn_async(NULL, args, NULL, G_SPAWN_SEARCH_PATH, NULL, NULL,
-				NULL, &error))
+				NULL, &error)) {
+		window = gtk_message_dialog_new (NULL, 0, GTK_MESSAGE_ERROR,
+				GTK_BUTTONS_NONE,
+				"Unable to load launcher: %s", error->message);
+		g_error_free(error);
+		gtk_dialog_run(GTK_DIALOG(window));
+
 		gtk_main_quit();
-
-	window = gtk_message_dialog_new (NULL, 0, GTK_MESSAGE_ERROR,
-			GTK_BUTTONS_NONE,
-			"Unable to load launcher: %s", error->message);
-	g_error_free(error);
-	gtk_dialog_run(GTK_DIALOG(window));
-
-	gtk_main_quit();
+	}
 }
 
 void lastdestroyed() {
-	launchlauncher();
+//	launchlauncher();
+	gtk_main_quit();
 }
 
 void next(GtkButton *button, gpointer __unused) {
-	gtk_widget_hide (window);
+	static gint lineindex = 0;
+	if (lineindex > 0)
+		gtk_widget_hide (window);
 
 	if ((lines[lineindex] != NULL) && g_strcmp0(lines[lineindex], "")) {
-		doone(lines[lineindex]);
 		lineindex++;
+		if (wavfname != NULL)
+			g_free (wavfname);
+
+		wavfname = g_strdup_printf ("%s/arctic_%04d.wav", traindir, lineindex);
+		doone(lines[lineindex-1]);
 	}
 	else {
 		lastdestroyed();
@@ -69,7 +76,9 @@ int main(int argc, char *argv[]) {
 	gchar *path;
 
 	if (argc > 1)
-		adcdev = argv[1];
+		adcdev = g_strdup(argv[1]);
+
+	fprintf (stderr, "%s Copyright (C) 2013 Eli Cohen\n", argv[0]);
 
 	gtk_init (&argc, &argv);
 
@@ -83,25 +92,11 @@ int main(int argc, char *argv[]) {
 				GTK_BUTTONS_NONE,
 				"Error loading training data");
 		gtk_dialog_run(GTK_DIALOG(window));
-
-		return -1;
 	} else {
 		g_free(path);
 		lines = g_strsplit(contents, "\n", 0);
 
-		window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-		g_signal_connect(window, "destroy", gtk_main_quit, NULL);
-
-		vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 2);
-		hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 2);
-
-		button = gtk_button_new_from_stock (GTK_STOCK_GO_FORWARD);
-		g_signal_connect(button, "clicked", G_CALLBACK(next), NULL);
-		gtk_box_pack_start (GTK_BOX (hbox), button, TRUE, TRUE, 2);
-		gtk_box_pack_start (GTK_BOX (vbox), hbox, TRUE, TRUE, 2);
-
-		gtk_container_add (GTK_CONTAINER (window), vbox);
-		gtk_widget_show_all (window);
+		next (NULL, NULL);
 	}
 	gtk_main ();
 

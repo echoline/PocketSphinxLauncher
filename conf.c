@@ -2,6 +2,8 @@
 
 extern char *adcdev;
 extern char *modeldir;
+float progress = 0.0;
+GtkWidget *trainwindow = NULL;
 
 void sphinx_gui_config_save ();
 
@@ -19,22 +21,95 @@ void modeldir_changed (GtkEditable *editable, gpointer __unused) {
 	sphinx_gui_config_save();
 }
 
-void train_clicked (GtkButton *button, gpointer __unused) {
-	char *args[] = { "PocketSphinxTrainer", adcdev, NULL };
-	GError *error = NULL;
-	GtkWidget *window;
+static gboolean
+cb_out_watch( GIOChannel   *channel,
+              GIOCondition  cond,
+              GtkProgressBar *progress) {
+	gchar *string;
+	gsize  size;
 
-	if (g_spawn_async(NULL, args, NULL, G_SPAWN_SEARCH_PATH, NULL, NULL,
-				NULL, &error))
-		gtk_main_quit();
+	if( cond == G_IO_HUP )
+	{
+		g_io_channel_unref( channel );
+		return( FALSE );
+	}
 
-	window = gtk_message_dialog_new (NULL, 0, GTK_MESSAGE_ERROR,
-			GTK_BUTTONS_NONE,
-			"Unable to load trainer: %s", error->message);
+	g_io_channel_read_line( channel, &string, &size, NULL, NULL );
+	if (g_str_has_prefix (string, "PROGRESS")) {
+		gtk_progress_bar_set_fraction (progress,
+					g_strtod (&string[8], NULL));
+	}
 
-	g_error_free(error);
+	g_free( string );
 
-	gtk_dialog_run(GTK_DIALOG(window));
+	return( TRUE );
+}
+
+static gboolean
+cb_err_watch( GIOChannel   *channel,
+              GIOCondition  cond,
+              gpointer __unused) {
+	gchar *string;
+	gsize  size;
+
+	if( cond == G_IO_HUP )
+	{
+		g_io_channel_unref( channel );
+		return( FALSE );
+	}
+
+	g_io_channel_read_line( channel, &string, &size, NULL, NULL );
+	fprintf (stderr, "%s", string);
+	fflush (stderr);
+	g_free( string );
+
+	return( TRUE );
+}
+
+static void
+cb_child_watch( GPid  pid,
+                gint  status,
+		gboolean __unused) {
+	if (trainwindow != NULL) {
+		gtk_widget_destroy (trainwindow);
+	}
+}
+
+void
+train_clicked (GtkButton *button, gpointer __unused) {
+	gchar *args[] = { "PSTrainer.sh", adcdev, NULL };
+	gint out, err;
+	GIOChannel *out_ch, *err_ch;
+	GtkWidget *box;
+	GtkWidget *progress;
+	GPid pid;
+
+	if (g_spawn_async_with_pipes(NULL, args, NULL,
+			G_SPAWN_DO_NOT_REAP_CHILD | G_SPAWN_SEARCH_PATH, NULL,
+			NULL, &pid, NULL, &out, &err, NULL)) {
+        	progress = gtk_progress_bar_new ();
+		gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR(progress), 0.0);
+
+		out_ch = g_io_channel_unix_new(out);
+		err_ch = g_io_channel_unix_new(err);
+
+		g_child_watch_add(pid, (GChildWatchFunc)cb_child_watch, NULL);
+
+    		g_io_add_watch(out_ch, G_IO_IN | G_IO_HUP,
+					(GIOFunc)cb_out_watch, progress);
+		g_io_add_watch(err_ch, G_IO_IN | G_IO_HUP,
+					(GIOFunc)cb_err_watch, NULL);
+
+		trainwindow = gtk_message_dialog_new (NULL, 0, GTK_MESSAGE_INFO,
+				GTK_BUTTONS_NONE,
+				"PocketSphinx Training...");
+
+		box = gtk_dialog_get_content_area (GTK_DIALOG (trainwindow));
+		gtk_box_pack_start (GTK_BOX (box), progress, FALSE, FALSE, 2);
+		gtk_widget_show_all (trainwindow);
+
+		gtk_dialog_run(GTK_DIALOG(trainwindow));
+	}
 }
 
 void sphinx_gui_config_load () {

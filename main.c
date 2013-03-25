@@ -38,6 +38,8 @@ int main(int argc, char *argv[]) {
 	sphinx_gui_listen_t listen_stuff;
 	int i;
 
+	fprintf (stderr, "%s Copyright (C) 2013 Eli Cohen\n", argv[0]);
+
 	for (i = 0; i < argc; i++) {
 		if (!g_strcmp0(argv[i], "-adcdev")) {
 			i++;
@@ -100,8 +102,6 @@ int main(int argc, char *argv[]) {
 	listen_stuff.visible = TRUE;
 	gtk_widget_show_all (listen_stuff.window);
 	gtk_main ();
-
-	g_spawn_close_pid(listen_stuff.pid);
 
 	return 0;
 }

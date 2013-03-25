@@ -17,7 +17,6 @@
 
 typedef struct {
 	gint fd;
-	GPid pid;
 	GtkWidget *status;
 	GtkWidget *label;
 	GtkWidget *list;
