@@ -1,4 +1,5 @@
 #include <gtk/gtk.h>
+#include "dat.h"
 
 extern char *adcdev;
 extern char *modeldir;
@@ -69,31 +70,43 @@ cb_err_watch( GIOChannel   *channel,
 static void
 cb_child_watch( GPid  pid,
                 gint  status,
-		gboolean __unused) {
+		gpointer listen_stuff) {
 	if (trainwindow != NULL) {
 		gtk_widget_destroy (trainwindow);
 	}
+
+	sphinx_gui_listen (listen_stuff);
 }
 
 void
-train_clicked (GtkButton *button, gpointer __unused) {
+train_clicked (GtkButton *button, gpointer arg) {
 	gchar *args[] = { "PSTrainer.sh", adcdev, NULL };
 	gint out, err;
 	GIOChannel *out_ch, *err_ch;
 	GtkWidget *box;
 	GtkWidget *progress;
 	GPid pid;
+	sphinx_gui_listen_t *listen_stuff = arg;
+	void *res;
 
-	if (g_spawn_async_with_pipes(NULL, args, NULL,
-			G_SPAWN_DO_NOT_REAP_CHILD | G_SPAWN_SEARCH_PATH, NULL,
-			NULL, &pid, NULL, &out, &err, NULL)) {
+	gtk_image_set_from_stock(GTK_IMAGE(listen_stuff->status), "gtk-no",
+							GTK_ICON_SIZE_MENU);
+	gtk_status_icon_set_from_stock(listen_stuff->tray, "gtk-no");
+	pthread_cancel (listen_stuff->thread);
+	pthread_join (listen_stuff->thread, &res);
+
+	if (res == PTHREAD_CANCELED) if (g_spawn_async_with_pipes(NULL, args,
+			NULL, G_SPAWN_DO_NOT_REAP_CHILD | G_SPAWN_SEARCH_PATH,
+			NULL, NULL, &pid, NULL, &out, &err, NULL)) {
+
         	progress = gtk_progress_bar_new ();
 		gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR(progress), 0.0);
 
 		out_ch = g_io_channel_unix_new(out);
 		err_ch = g_io_channel_unix_new(err);
 
-		g_child_watch_add(pid, (GChildWatchFunc)cb_child_watch, NULL);
+		g_child_watch_add(pid, (GChildWatchFunc)cb_child_watch,
+					listen_stuff);
 
     		g_io_add_watch(out_ch, G_IO_IN | G_IO_HUP,
 					(GIOFunc)cb_out_watch, progress);
@@ -129,7 +142,7 @@ void sphinx_gui_config_load () {
 		modeldir = g_key_file_get_string(key_file, "pslauncher",
 						"modeldir", NULL);
 	} else {
-		modeldir = g_strdup("./lib/model");
+		modeldir = g_strdup(MODELDIR);
 	}
 
 	g_key_file_free (key_file);
@@ -161,7 +174,7 @@ void sphinx_gui_config_save () {
 	g_free(conf);
 }
 
-void sphinx_gui_configure(GtkWidget* configbutton, gpointer __unused) {
+void sphinx_gui_configure(GtkWidget* configbutton, gpointer listen_stuff) {
 	GtkWidget *label;
 	GtkWidget *entry;
 	GtkWidget *button;
@@ -191,7 +204,8 @@ void sphinx_gui_configure(GtkWidget* configbutton, gpointer __unused) {
 
 	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 1);
 	button = gtk_button_new_with_label ("Train");
-	g_signal_connect (button, "clicked", G_CALLBACK(train_clicked), NULL);
+	g_signal_connect (button, "clicked", G_CALLBACK(train_clicked),
+							listen_stuff);
 	gtk_box_pack_start (GTK_BOX(hbox), button, FALSE, TRUE, 2);
 	label = gtk_label_new ("Train acoustic model to your voice");
 	gtk_box_pack_start (GTK_BOX(hbox), label, FALSE, TRUE, 2);

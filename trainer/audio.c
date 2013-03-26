@@ -22,20 +22,21 @@ void record(GtkButton *button, gpointer __unused) {
 		gtk_widget_hide(window);
 		window = gtk_message_dialog_new (NULL, 0, GTK_MESSAGE_ERROR,
 				GTK_BUTTONS_NONE,
-				"Error stopping: %s", error->message);
+				"Error recording: %s", error->message);
 		g_error_free(error);
 		gtk_dialog_run(GTK_DIALOG(window));
 		g_signal_connect(window, "destroy", gtk_main_quit, NULL);
 	}
 }
 
-void stop(GtkButton *button, gpointer __unused) {
+void stop(GtkButton *button, gpointer arg) {
 	gchar *args[] = { "killall", "arecord", "aplay", NULL };
 	GError *error = NULL;
 
 	gtk_widget_set_sensitive (recordbutton, TRUE);
 	gtk_widget_set_sensitive (stopbutton, FALSE);
 	gtk_widget_set_sensitive (playbutton, TRUE);
+	gtk_widget_set_sensitive (GTK_WIDGET (arg), TRUE);
 
 	if (!g_spawn_async(NULL, args, NULL, G_SPAWN_SEARCH_PATH, NULL, NULL,
 				NULL, &error)) {
@@ -49,7 +50,7 @@ void stop(GtkButton *button, gpointer __unused) {
 	}
 }
 
-void play(GtkButton *button, gpointer __unused) {
+void play(GtkButton *button, gpointer arg) {
 	gchar *args[] = { "aplay", wavfname, NULL };
 	GError *error = NULL;
 
@@ -62,7 +63,7 @@ void play(GtkButton *button, gpointer __unused) {
 		gtk_widget_hide(window);
 		window = gtk_message_dialog_new (NULL, 0, GTK_MESSAGE_ERROR,
 				GTK_BUTTONS_NONE,
-				"Error stopping: %s", error->message);
+				"Error playing: %s", error->message);
 		g_error_free(error);
 		gtk_dialog_run(GTK_DIALOG(window));
 		g_signal_connect(window, "destroy", gtk_main_quit, NULL);
@@ -84,7 +85,7 @@ void doone(char *text) {
 
 	stopbutton = gtk_button_new_from_stock (GTK_STOCK_MEDIA_STOP);
 	gtk_widget_set_sensitive (stopbutton, FALSE);
-	g_signal_connect(stopbutton, "clicked", G_CALLBACK(stop), NULL);
+//	g_signal_connect(stopbutton, "clicked", G_CALLBACK(stop), NULL);
 	gtk_box_pack_start (GTK_BOX (hbox), stopbutton, TRUE, TRUE, 2);
 
 	playbutton = gtk_button_new_from_stock (GTK_STOCK_MEDIA_PLAY);
@@ -108,6 +109,8 @@ void doone(char *text) {
 
 	hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 2);
 	button = gtk_button_new_from_stock (GTK_STOCK_GO_FORWARD);
+	g_signal_connect(stopbutton, "clicked", G_CALLBACK(stop), button);
+	gtk_widget_set_sensitive (button, FALSE);
 	g_signal_connect(button, "clicked", G_CALLBACK(next), NULL);
 	gtk_box_pack_start (GTK_BOX (hbox), button, TRUE, FALSE, 2);
 

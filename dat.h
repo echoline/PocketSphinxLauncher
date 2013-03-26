@@ -23,4 +23,5 @@ typedef struct {
 	GtkWidget *window;
 	gboolean visible;
 	GtkStatusIcon *tray;
+	pthread_t thread;
 } sphinx_gui_listen_t;

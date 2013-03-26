@@ -58,6 +58,9 @@
 #include <stdio.h>
 #include <string.h>
 
+#define _OPEN_THREAD
+#include <pthread.h>
+
 #if !defined(_WIN32_WCE)
 #include <signal.h>
 #include <setjmp.h>
@@ -80,6 +83,8 @@ extern char *modeldir;
 
 static ps_decoder_t *ps;
 static cmd_ln_t *config;
+static ad_rec_t *ad;
+static cont_ad_t *cont;
 
 /* Sleep for specified msec */
 static void
@@ -109,12 +114,10 @@ sleep_msec(int32 ms)
 static void
 recognize_from_microphone(int outfd)
 {
-    ad_rec_t *ad;
     int16 adbuf[4096];
     int32 k, ts, rem;
     char const *hyp;
     char const *uttid;
-    cont_ad_t *cont;
     char word[4096];
 
     if ((ad = ad_open_dev(adcdev,
@@ -203,11 +206,11 @@ recognize_from_microphone(int outfd)
     ad_close(ad);
 }
 
-static jmp_buf jbuf;
 static void
-sighandler(int signo)
+cleanup_handler (void *arg)
 {
-    longjmp(jbuf, 1);
+    cont_ad_close(cont);
+    ad_close(ad);
 }
 
 void*
@@ -218,6 +221,8 @@ sphinx_gui_listen_main(void *arg)
     char hmm[256];
     char lm[256];
     char dict[256];
+
+    pthread_cleanup_push(cleanup_handler, NULL);    
 
     snprintf(hmm, 256, "%s/hmm", modeldir);
     snprintf(lm, 256, "%s/lm.DMP", modeldir);
@@ -234,16 +239,11 @@ sphinx_gui_listen_main(void *arg)
     if (ps == NULL)
         return NULL;
 
-    /* Make sure we exit cleanly (needed for profiling among other things) */
-    /* Signals seem to be broken in arm-wince-pe. */
-#if !defined(GNUWINCE) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
-    signal(SIGINT, &sighandler);
-#endif
-
-    if (setjmp(jbuf) == 0) {
-        recognize_from_microphone(outfd);
-    }
+    recognize_from_microphone(outfd);
 
     ps_free(ps);
+
+    pthread_cleanup_pop(0);
+
     return NULL;
 }

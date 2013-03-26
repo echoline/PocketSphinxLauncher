@@ -87,7 +87,7 @@ int main(int argc, char *argv[]) {
 	button = gtk_button_new_with_label("Configure");
 	gtk_box_pack_start (GTK_BOX(hbox), button, FALSE, TRUE, 2);
 	g_signal_connect(button, "clicked", G_CALLBACK(sphinx_gui_configure),
-			listen_stuff.list);
+							&listen_stuff);
 	gtk_box_pack_start (GTK_BOX(vbox), hbox, FALSE, TRUE, 2);
 
 	listen_stuff.tray = gtk_status_icon_new_from_stock("gtk-no");
