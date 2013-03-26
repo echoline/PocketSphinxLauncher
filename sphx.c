@@ -80,6 +80,9 @@
 
 extern char *adcdev;
 extern char *modeldir;
+extern char *hmmdir;
+extern char *lmdump;
+extern char *lmdict;
 
 static ps_decoder_t *ps;
 static cmd_ln_t *config;
@@ -224,9 +227,9 @@ sphinx_gui_listen_main(void *arg)
 
     pthread_cleanup_push(cleanup_handler, NULL);    
 
-    snprintf(hmm, 256, "%s/hmm", modeldir);
-    snprintf(lm, 256, "%s/lm.DMP", modeldir);
-    snprintf(dict, 256, "%s/dict.dic", modeldir);
+    snprintf(hmm, 256, "%s/%s", modeldir, hmmdir);
+    snprintf(lm, 256, "%s/%s", modeldir, lmdump);
+    snprintf(dict, 256, "%s/%s", modeldir, lmdict);
 
     config = cmd_ln_init(NULL, ps_args(), TRUE,
 			"-hmm", hmm, "-lm", lm, "-dict", dict,

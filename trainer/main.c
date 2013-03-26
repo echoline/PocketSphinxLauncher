@@ -24,6 +24,9 @@ GtkWidget *recordbutton;
 char *adcdev = NULL;
 char *modeldir = NULL;
 char *traindir = NULL;
+char *hmmdir = NULL;
+char *lmdict = NULL;
+char *lmdump = NULL;
 
 gchar **lines;
 gchar *wavfname = NULL;

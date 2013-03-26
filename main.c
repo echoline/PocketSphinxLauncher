@@ -20,6 +20,9 @@
 
 char *adcdev = NULL;
 char *modeldir = NULL;
+char *hmmdir = NULL;
+char *lmdump = NULL;
+char *lmdict = NULL;
 
 void sphinx_gui_visibility(GtkStatusIcon *status_icon, gpointer user_data) {
 	sphinx_gui_listen_t *listen_stuff = (sphinx_gui_listen_t*)user_data;

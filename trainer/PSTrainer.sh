@@ -1,7 +1,7 @@
 #!/bin/sh
+TRAINDIR=${HOME}/.config/pslauncher/train
 
-TRAINDIR=${HOME}/.config/pstrainer
-
+# Set up training example sentences for PocketSphinxTrainer
 if test ! -d ${TRAINDIR}; then
 	mkdir -p ${TRAINDIR};
 	cat > ${TRAINDIR}/arctic20.dic <<-"__EOF"
@@ -180,6 +180,8 @@ YOU'RE(2)	Y UW R
 YOUR	Y AO R
 YOUR(2)	Y UH R
 	__EOF
+	# let's generate the file list file procedurally...
+	# sorry for using gnu seq, hope you have it :)
 	for i in $(seq -f%04.f 20); do
 		echo arctic_$i > ${TRAINDIR}/arctic20.listoffiles;
 	done
@@ -229,12 +231,16 @@ Clubs and balls and cities grew to be only memories.
 	__EOF
 fi
 
+# record samples
 PocketSphinxTrainer $*
 
+# begin training
 cd ${TRAINDIR}
 
+# progress bar
 echo PROGRESS0.1
 
+# these programs are the sphinxtrain tools
 sphinx_fe -argfile ../model/hmm/feat.params -samprate 16000 -c arctic20.listoffiles -di . -do . -ei wav -eo mfc -mswav yes
 
 echo PROGRESS0.2

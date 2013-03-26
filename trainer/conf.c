@@ -3,22 +3,9 @@
 extern char *adcdev;
 extern char *modeldir;
 extern char *traindir;
-
-void sphinx_gui_config_save ();
-
-void traindir_changed (GtkEditable *editable, gpointer __unused) {
-	if (traindir)
-		g_free(traindir);
-	traindir = g_strdup(gtk_entry_get_text (GTK_ENTRY (editable)));
-	sphinx_gui_config_save();
-}
-
-void modeldir_changed (GtkEditable *editable, gpointer __unused) {
-	if (modeldir)
-		g_free(modeldir);
-	modeldir = g_strdup(gtk_entry_get_text (GTK_ENTRY (editable)));
-	sphinx_gui_config_save();
-}
+extern char *hmmdir;
+extern char *lmdump;
+extern char *lmdict;
 
 void sphinx_gui_config_load () {
 	GKeyFile *key_file = g_key_file_new();
@@ -29,17 +16,33 @@ void sphinx_gui_config_load () {
 	if (g_key_file_load_from_file (key_file, conf, 0, NULL)) {
 		if (adcdev != NULL)
 			g_free(adcdev);
-		if (traindir != NULL)
-			g_free(traindir);
-		if (modeldir != NULL)
-			g_free(modeldir);
-
 		adcdev = g_key_file_get_string(key_file, "pslauncher",
 						"adcdev", NULL);
+
+		if (traindir != NULL)
+			g_free(traindir);
 		traindir = g_key_file_get_string(key_file, "pslauncher",
 						"traindir", NULL);
+
+		if (modeldir != NULL)
+			g_free(modeldir);
 		modeldir = g_key_file_get_string(key_file, "pslauncher",
 						"modeldir", NULL);
+
+		if (hmmdir != NULL)
+			g_free(hmmdir);
+		hmmdir = g_key_file_get_string(key_file, "pslauncher",
+						"hmmdir", NULL);
+
+		if (lmdump != NULL)
+			g_free(lmdump);
+		lmdump = g_key_file_get_string(key_file, "pslauncher",
+						"lmdump", NULL);
+
+		if (lmdict != NULL)
+			g_free(lmdict);
+		lmdict = g_key_file_get_string(key_file, "pslauncher",
+						"lmdict", NULL);
 	}
 
 	if (adcdev == NULL)
@@ -50,6 +53,15 @@ void sphinx_gui_config_load () {
 
 	if (traindir == NULL)
 		traindir = g_strdup(TRAINDIR);
+
+	if (hmmdir == NULL)
+		hmmdir = g_strdup(HMMDIR);
+
+	if (lmdump == NULL)
+		lmdump = g_strdup(LMDUMP);
+
+	if (lmdict == NULL)
+		lmdict = g_strdup(LMDICT);
 
 	g_key_file_free (key_file);
 }
@@ -74,6 +86,15 @@ void sphinx_gui_config_save () {
 		g_key_file_set_string (key_file, "pslauncher", "traindir", traindir);
 	if (modeldir != NULL)
 		g_key_file_set_string (key_file, "pslauncher", "modeldir", modeldir);
+
+	if (hmmdir != NULL)
+		g_key_file_set_string (key_file, "pslauncher", "hmmdir", hmmdir);
+
+	if (lmdict != NULL)
+		g_key_file_set_string (key_file, "pslauncher", "lmdict", lmdict);
+
+	if (lmdump != NULL)
+		g_key_file_set_string (key_file, "pslauncher", "lmdump", lmdump);
 
 	data = g_key_file_to_data (key_file, NULL, NULL);
 	g_file_set_contents(conf, data, -1, NULL);
