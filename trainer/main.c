@@ -23,7 +23,6 @@ GtkWidget *stopbutton;
 GtkWidget *recordbutton;
 char *adcdev = NULL;
 char *modeldir = NULL;
-char *traindir = NULL;
 char *hmmdir = NULL;
 char *lmdict = NULL;
 char *lmdump = NULL;
@@ -62,7 +61,7 @@ void next(GtkButton *button, gpointer __unused) {
 		if (wavfname != NULL)
 			g_free (wavfname);
 
-		wavfname = g_strdup_printf ("%s/arctic_%04d.wav", traindir, lineindex);
+		wavfname = g_strdup_printf ("%s/arctic_%04d.wav", modeldir, lineindex);
 		doone(lines[lineindex-1]);
 	}
 	else {
@@ -87,7 +86,7 @@ int main(int argc, char *argv[]) {
 
 	sphinx_gui_config_load();
 
-	path = g_strconcat(traindir, "/arctic20.txt", NULL);
+	path = g_strconcat(modeldir, "/arctic20.txt", NULL);
 	if (!g_file_get_contents (path, &contents, NULL, NULL)) {
 		g_free(path);
 
@@ -100,10 +99,9 @@ int main(int argc, char *argv[]) {
 		lines = g_strsplit(contents, "\n", 0);
 
 		next (NULL, NULL);
+		gtk_main ();
+		sphinx_gui_config_save();
 	}
-	gtk_main ();
-
-	sphinx_gui_config_save();
 
 	return 0;
 }

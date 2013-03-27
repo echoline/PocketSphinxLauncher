@@ -2,7 +2,6 @@
 
 extern char *adcdev;
 extern char *modeldir;
-extern char *traindir;
 extern char *hmmdir;
 extern char *lmdump;
 extern char *lmdict;
@@ -18,11 +17,6 @@ void sphinx_gui_config_load () {
 			g_free(adcdev);
 		adcdev = g_key_file_get_string(key_file, "pslauncher",
 						"adcdev", NULL);
-
-		if (traindir != NULL)
-			g_free(traindir);
-		traindir = g_key_file_get_string(key_file, "pslauncher",
-						"traindir", NULL);
 
 		if (modeldir != NULL)
 			g_free(modeldir);
@@ -50,9 +44,6 @@ void sphinx_gui_config_load () {
 
 	if (modeldir == NULL)
 		modeldir = g_strdup(MODELDIR);
-
-	if (traindir == NULL)
-		traindir = g_strdup(TRAINDIR);
 
 	if (hmmdir == NULL)
 		hmmdir = g_strdup(HMMDIR);
@@ -82,8 +73,7 @@ void sphinx_gui_config_save () {
 
 	if (adcdev != NULL)
 		g_key_file_set_string (key_file, "pslauncher", "adcdev", adcdev);
-	if (traindir != NULL)
-		g_key_file_set_string (key_file, "pslauncher", "traindir", traindir);
+	
 	if (modeldir != NULL)
 		g_key_file_set_string (key_file, "pslauncher", "modeldir", modeldir);
 

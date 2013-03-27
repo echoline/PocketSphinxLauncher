@@ -183,7 +183,7 @@ YOUR(2)	Y UH R
 	# let's generate the file list file procedurally...
 	# sorry for using gnu seq, hope you have it :)
 	for i in $(seq -f%04.f 20); do
-		echo arctic_$i > ${TRAINDIR}/arctic20.listoffiles;
+		echo arctic_$i >> ${TRAINDIR}/arctic20.listoffiles;
 	done
 	cat > ${TRAINDIR}/arctic20.transcription <<-"__EOF"
 <s> AUTHOR OF THE DANGER TRAIL PHILIP STEELS ETC </s> (arctic_0001)
@@ -230,6 +230,8 @@ I followed the line of the proposed railroad, looking for chances.
 Clubs and balls and cities grew to be only memories.
 	__EOF
 fi
+
+exit
 
 # record samples
 PocketSphinxTrainer $*
