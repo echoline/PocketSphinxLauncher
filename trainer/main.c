@@ -30,24 +30,8 @@ char *lmdump = NULL;
 gchar **lines;
 gchar *wavfname = NULL;
 
-void launchlauncher() {
-	char *args[] = { "PocketSphinxLauncher", "-adcdev", adcdev, NULL };
-	GError *error = NULL;
-
-	if (g_spawn_async(NULL, args, NULL, G_SPAWN_SEARCH_PATH, NULL, NULL,
-				NULL, &error)) {
-		window = gtk_message_dialog_new (NULL, 0, GTK_MESSAGE_ERROR,
-				GTK_BUTTONS_NONE,
-				"Unable to load launcher: %s", error->message);
-		g_error_free(error);
-		gtk_dialog_run(GTK_DIALOG(window));
-
-		gtk_main_quit();
-	}
-}
-
 void lastdestroyed() {
-//	launchlauncher();
+	train_go();
 	gtk_main_quit();
 }
 
