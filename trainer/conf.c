@@ -1,4 +1,5 @@
 #include <gtk/gtk.h>
+#include "examples.h"
 
 extern char *adcdev;
 extern char *modeldir;
@@ -45,14 +46,23 @@ void sphinx_gui_config_load () {
 	if (modeldir == NULL)
 		modeldir = g_strdup(MODELDIR);
 
-	if (hmmdir == NULL)
-		hmmdir = g_strdup(HMMDIR);
+	if (!g_strcmp0(MODELDIR, modeldir)) {
+		g_free(modeldir);
+		modeldir = g_strconcat(g_get_user_config_dir(), "/pslauncher",
+				"/model", NULL);
 
-	if (lmdump == NULL)
-		lmdump = g_strdup(LMDUMP);
+		if (hmmdir != NULL)
+			g_free (hmmdir);
+		modeldir = g_strdup("hmm");
 
-	if (lmdict == NULL)
-		lmdict = g_strdup(LMDICT);
+		if (lmdump != NULL)
+			g_free (lmdump);
+		lmdump = g_strdup("lm.DMP");
+
+		if (lmdict != NULL)
+			g_free (lmdict);
+		lmdump = g_strdup("lm.dic");
+	}
 
 	g_key_file_free (key_file);
 }
