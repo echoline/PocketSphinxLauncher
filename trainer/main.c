@@ -16,6 +16,7 @@
  */
 #include <gtk/gtk.h>
 #include "fns.h"
+#include "examples.h"
 
 GtkWidget *window;
 GtkWidget *playbutton;
@@ -71,6 +72,24 @@ int main(int argc, char *argv[]) {
 	sphinx_gui_config_load();
 
 	path = g_strconcat(modeldir, "/arctic20.txt", NULL);
+	if (!g_file_test (path, G_FILE_TEST_EXISTS)) {
+		g_free (path);
+		path = g_strconcat(modeldir, "/arctic20.dic", NULL);
+		g_file_set_contents (path, arctic20_dic, -1, NULL);
+
+		g_free (path);
+		path = g_strconcat(modeldir, "/arctic20.listoffiles", NULL);
+		g_file_set_contents (path, arctic20_listoffiles, -1, NULL);
+
+		g_free (path);
+		path = g_strconcat(modeldir, "/arctic20.transcription", NULL);
+		g_file_set_contents (path, arctic20_transcription, -1, NULL);
+
+		g_free (path);
+		path = g_strconcat(modeldir, "/arctic20.txt", NULL);
+		g_file_set_contents (path, arctic20_txt, -1, NULL);
+	}
+
 	if (!g_file_get_contents (path, &contents, NULL, NULL)) {
 		g_free(path);
 

@@ -10,4 +10,4 @@ PocketSphinxTrainer: $(OBJS)
 	gcc -o PocketSphinxTrainer $(OBJS) $(LDFLAGS)
 
 clean:
-	rm -f PocketSphinxTrainer *.o *~ tools/makedoth arctic20.h
+	rm -f PocketSphinxTrainer *.o *~

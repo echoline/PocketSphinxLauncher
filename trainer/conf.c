@@ -1,5 +1,4 @@
 #include <gtk/gtk.h>
-#include "examples.h"
 
 extern char *adcdev;
 extern char *modeldir;
@@ -8,6 +7,8 @@ extern char *lmdump;
 extern char *lmdict;
 
 void sphinx_gui_config_load () {
+	gchar *hmm, *lm, *dict;
+	GFile *file;
 	GKeyFile *key_file = g_key_file_new();
 	gchar *conf = g_strconcat(g_get_user_config_dir(),
 				"/pslauncher/config.ini",
@@ -50,6 +51,8 @@ void sphinx_gui_config_load () {
 		g_free(modeldir);
 		modeldir = g_strconcat(g_get_user_config_dir(), "/pslauncher",
 				"/model", NULL);
+
+		g_mkdir_with_parents (modeldir, 0700);
 
 		if (hmmdir != NULL)
 			g_free (hmmdir);
