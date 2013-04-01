@@ -13,4 +13,4 @@ arctic20.h: tools/makedoth
 	tools/makedoth arctic20/* arctic20.h
 
 clean:
-	rm -f $(ALL) *.o *~
+	rm -f $(ALL) *.o *~ tools/makedoth
