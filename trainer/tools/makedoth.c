@@ -24,23 +24,38 @@ int main(int argc, char **argv) {
 	inputs = (char**)calloc(1, sizeof(char*)*argc);
 	for (i = 1; i < argc - 1; i++) {
 		strcpy(filename, argv[i]);
-		i++;
 		f = fopen(filename, "r");
 		perror(filename);
-		if (!f) continue;
+		if (!f)
+			continue;
+
+		while (strcspn(filename, "/") < strlen(filename)) {
+			j = strlen(filename) - strcspn(filename, "/") - 1;
+			memmove (filename,
+				&filename[strcspn(filename, "/") + 1], j);
+			filename[j] = '\0';
+		}
+
 		while (strcspn(filename, ".") < strlen(filename))
 			filename[strcspn(filename, ".")] = '_';
-		sprintf(buf, "char %s[] = \"", filename);
+
+		sprintf(buf, "char %s[] = { ", filename);
 		total = 0;
 		len = strlen(buf);
 		while ((res = fwrite(buf + total, 1, len - total, out)) <
 				(len - total) && (res > 0)) total += res;
 		while ((chr = fgetc(f)) != EOF) {
-			sprintf(chrhex, "\\x%02X", chr);
+			if (isprint(chr) && (chr != '%') &&
+					    (chr != '\\') &&
+					    (chr != '\''))
+				sprintf(chrhex, "\'%c\', ", chr);
+			else
+				sprintf(chrhex, "\'\\x%02X\', ", chr);
 			len = strlen(chrhex);
 			while (fwrite(chrhex, 1, strlen(chrhex), out) == 0) perror("chrhex");
 		}
-		sprintf(buf, "\";\n\n", argv[i]);
+		sprintf(buf, "0 };\n\n");
+
 		total = 0;
 		len = strlen(buf);
 		while ((res = fwrite(buf + total, 1, len - total, out)) <

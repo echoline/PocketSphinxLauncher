@@ -1,19 +1,16 @@
-ALL=arctic20.h PocketSphinxTrainer
-MODELDIR=/usr/local/share/pocketsphinx/model
-HMMDIR=hmm/en_US/hub4wsj_sc_8k/
-LMDUMP=lm/en_US/hub4.5000.DMP
-LMDICT=lm/en_US/hub4.5000.dic
+ALL=PocketSphinxTrainer
+include ../defs.mk
 CFLAGS=`pkg-config --cflags gtk+-3.0` -g -DMODELDIR=\"$(MODELDIR)\" -DHMMDIR=\"$(HMMDIR)\" -DLMDUMP=\"$(LMDUMP)\" -DLMDICT=\"$(LMDICT)\"
 LDFLAGS=`pkg-config --libs gtk+-3.0`
 OBJS=$(patsubst %.c,%.o,$(wildcard *.c))
 
 all: $(ALL)
 
-arctic20.h: tools/makedoth
-	cd arctic20 && for i in *; do ../tools/makedoth $$i ../arctic20.h; done;
-
-PocketSphinxTrainer: $(OBJS)
+PocketSphinxTrainer: arctic20.h $(OBJS)
 	gcc -o PocketSphinxTrainer $(OBJS) $(LDFLAGS)
 
+arctic20.h: tools/makedoth
+	tools/makedoth arctic20/* arctic20.h
+
 clean:
-	rm -f PocketSphinxTrainer *.o *~ tools/makedoth arctic20.h
+	rm -f $(ALL) *.o *~

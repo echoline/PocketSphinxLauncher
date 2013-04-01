@@ -16,6 +16,7 @@
  */
 #include <gtk/gtk.h>
 #include "fns.h"
+#include "arctic20.h"
 
 GtkWidget *window;
 GtkWidget *playbutton;
@@ -30,8 +31,24 @@ char *lmdump = NULL;
 gchar **lines;
 gchar *wavfname = NULL;
 
+void launchlauncher() {
+	char *args[] = { "PocketSphinxLauncher", "-adcdev", adcdev, NULL };
+	GError *error = NULL;
+
+	if (g_spawn_async(NULL, args, NULL, G_SPAWN_SEARCH_PATH, NULL, NULL,
+				NULL, &error)) {
+		window = gtk_message_dialog_new (NULL, 0, GTK_MESSAGE_ERROR,
+				GTK_BUTTONS_NONE,
+				"Unable to load launcher: %s", error->message);
+		g_error_free(error);
+		gtk_dialog_run(GTK_DIALOG(window));
+
+		gtk_main_quit();
+	}
+}
+
 void lastdestroyed() {
-	train_go();
+//	launchlauncher();
 	gtk_main_quit();
 }
 
@@ -71,6 +88,24 @@ int main(int argc, char *argv[]) {
 	sphinx_gui_config_load();
 
 	path = g_strconcat(modeldir, "/arctic20.txt", NULL);
+	if (!g_file_test (path, G_FILE_TEST_EXISTS)) {
+		g_free (path);
+		path = g_strconcat(modeldir, "/arctic20.dic", NULL);
+		g_file_set_contents (path, arctic20_dic, -1, NULL);
+
+		g_free (path);
+		path = g_strconcat(modeldir, "/arctic20.listoffiles", NULL);
+		g_file_set_contents (path, arctic20_listoffiles, -1, NULL);
+
+		g_free (path);
+		path = g_strconcat(modeldir, "/arctic20.transcription", NULL);
+		g_file_set_contents (path, arctic20_transcription, -1, NULL);
+
+		g_free (path);
+		path = g_strconcat(modeldir, "/arctic20.txt", NULL);
+		g_file_set_contents (path, arctic20_txt, -1, NULL);
+	}
+
 	if (!g_file_get_contents (path, &contents, NULL, NULL)) {
 		g_free(path);
 

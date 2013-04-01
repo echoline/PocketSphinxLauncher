@@ -1,4 +1,5 @@
-void train_go ();
+void traindir_changed (GtkEditable *editable, gpointer __unused);
+void modeldir_changed (GtkEditable *editable, gpointer __unused);
 void sphinx_gui_config_load ();
 void sphinx_gui_config_save ();
 void record(GtkButton *button, gpointer __unused);

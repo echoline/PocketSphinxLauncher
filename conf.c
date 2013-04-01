@@ -124,9 +124,6 @@ train_clicked (GtkButton *button, gpointer arg) {
 				"PocketSphinxTrainer failed to launch!");
 
 		gtk_dialog_run(GTK_DIALOG(box));
-		gtk_widget_destroy (box);
-
-		sphinx_gui_listen (listen_stuff);
 	}
 }
 
