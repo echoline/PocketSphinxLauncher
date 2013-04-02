@@ -6,4 +6,5 @@ void record(GtkButton *button, gpointer __unused);
 void stop(GtkButton *button, gpointer __unused);
 void next(GtkButton *button, gpointer __unused);
 void doone(char *text);
+void train_go ();
 

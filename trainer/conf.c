@@ -7,12 +7,17 @@ extern char *lmdump;
 extern char *lmdict;
 
 void sphinx_gui_config_load () {
-	gchar *hmm, *lm, *dict;
+	gchar *hmm, *lm, *dict, *from;
 	GFile *file;
 	GKeyFile *key_file = g_key_file_new();
+	gchar *copyargs[] = { "cp", "-vr", NULL, NULL, NULL };
 	gchar *conf = g_strconcat(g_get_user_config_dir(),
 				"/pslauncher/config.ini",
 				NULL);
+	GtkWidget *window;
+	GError *error;
+	gchar here[2] = ".";
+	gchar *newmodeldir;
 
 	if (g_key_file_load_from_file (key_file, conf, 0, NULL)) {
 		if (adcdev != NULL)
@@ -47,26 +52,55 @@ void sphinx_gui_config_load () {
 	if (modeldir == NULL)
 		modeldir = g_strdup(MODELDIR);
 
-	if (!g_strcmp0(MODELDIR, modeldir)) {
-		g_free(modeldir);
-		modeldir = g_strconcat(g_get_user_config_dir(), "/pslauncher",
-				"/model", NULL);
+	newmodeldir = g_strconcat(g_get_user_config_dir(), "/pslauncher", NULL);
 
-		g_mkdir_with_parents (modeldir, 0700);
+	if (hmmdir == NULL)
+		hmmdir = g_strdup(HMMDIR);
 
-		if (hmmdir != NULL)
-			g_free (hmmdir);
-		hmmdir = g_strdup("hmm");
+	if (lmdump == NULL)
+		lmdump = g_strdup(LMDUMP);
 
-		if (lmdump != NULL)
-			g_free (lmdump);
-		lmdump = g_strdup("lm.DMP");
+	if (lmdict == NULL)
+		lmdict = g_strdup(LMDICT);
 
-		if (lmdict != NULL)
-			g_free (lmdict);
-		lmdict = g_strdup("lm.dic");
+	if (!g_file_test (newmodeldir, G_FILE_TEST_EXISTS)) {
+		from = g_strdup(modeldir);
+
+		g_mkdir_with_parents (newmodeldir, 0700);
+
+		if (g_chdir (newmodeldir)) {
+			window = gtk_message_dialog_new (NULL, 0,
+				GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
+				"Failed to change directory to %s.",
+				newmodeldir);
+
+			gtk_dialog_run (GTK_DIALOG (window));
+			gtk_main_quit ();
+		}
+
+		copyargs[2] = from;
+		copyargs[3] = here;
+
+		if (!g_spawn_sync(NULL, copyargs, NULL, G_SPAWN_SEARCH_PATH,
+					NULL, NULL, NULL, NULL, NULL,
+					&error)) {
+			gtk_widget_hide(window);
+			window = gtk_message_dialog_new (NULL, 0,
+					GTK_MESSAGE_ERROR,
+					GTK_BUTTONS_NONE,
+					"Error copying HMM: %s",
+				       	error->message);
+			g_error_free(error);
+			gtk_dialog_run(GTK_DIALOG(window));
+			gtk_main_quit();
+		}
+
+		g_free (from);
+
+		modeldir = g_strconcat(newmodeldir, "/model", NULL);
 	}
 
+	g_free (newmodeldir);
 	g_key_file_free (key_file);
 }
 
@@ -85,19 +119,24 @@ void sphinx_gui_config_save () {
 				NULL);
 
 	if (adcdev != NULL)
-		g_key_file_set_string (key_file, "pslauncher", "adcdev", adcdev);
+		g_key_file_set_string (key_file, "pslauncher", "adcdev",
+					adcdev);
 	
 	if (modeldir != NULL)
-		g_key_file_set_string (key_file, "pslauncher", "modeldir", modeldir);
+		g_key_file_set_string (key_file, "pslauncher", "modeldir",
+					modeldir);
 
 	if (hmmdir != NULL)
-		g_key_file_set_string (key_file, "pslauncher", "hmmdir", hmmdir);
+		g_key_file_set_string (key_file, "pslauncher", "hmmdir",
+					hmmdir);
 
 	if (lmdict != NULL)
-		g_key_file_set_string (key_file, "pslauncher", "lmdict", lmdict);
+		g_key_file_set_string (key_file, "pslauncher", "lmdict",
+					lmdict);
 
 	if (lmdump != NULL)
-		g_key_file_set_string (key_file, "pslauncher", "lmdump", lmdump);
+		g_key_file_set_string (key_file, "pslauncher", "lmdump",
+					lmdump);
 
 	data = g_key_file_to_data (key_file, NULL, NULL);
 	g_file_set_contents(conf, data, -1, NULL);

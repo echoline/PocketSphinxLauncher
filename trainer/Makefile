@@ -9,8 +9,8 @@ all: $(ALL)
 PocketSphinxTrainer: arctic20.h $(OBJS)
 	gcc -o PocketSphinxTrainer $(OBJS) $(LDFLAGS)
 
-arctic20.h: tools/makedoth
+arctic20.h: tools/makedoth arctic20/*
 	tools/makedoth arctic20/* arctic20.h
 
 clean:
-	rm -f $(ALL) *.o *~ tools/makedoth
+	rm -f $(ALL) *.o *~ tools/makedoth arctic20.h

@@ -31,24 +31,8 @@ char *lmdump = NULL;
 gchar **lines;
 gchar *wavfname = NULL;
 
-void launchlauncher() {
-	char *args[] = { "PocketSphinxLauncher", "-adcdev", adcdev, NULL };
-	GError *error = NULL;
-
-	if (g_spawn_async(NULL, args, NULL, G_SPAWN_SEARCH_PATH, NULL, NULL,
-				NULL, &error)) {
-		window = gtk_message_dialog_new (NULL, 0, GTK_MESSAGE_ERROR,
-				GTK_BUTTONS_NONE,
-				"Unable to load launcher: %s", error->message);
-		g_error_free(error);
-		gtk_dialog_run(GTK_DIALOG(window));
-
-		gtk_main_quit();
-	}
-}
-
 void lastdestroyed() {
-//	launchlauncher();
+	train_go();
 	gtk_main_quit();
 }
 
@@ -75,6 +59,7 @@ int main(int argc, char *argv[]) {
 	GtkWidget *vbox;
 	GtkWidget *hbox;
 	GtkWidget *button;
+	GError *error;
 	gchar *contents;
 	gchar *path;
 
@@ -84,8 +69,13 @@ int main(int argc, char *argv[]) {
 	fprintf (stderr, "%s Copyright (C) 2013 Eli Cohen\n", argv[0]);
 
 	gtk_init (&argc, &argv);
-
 	sphinx_gui_config_load();
+
+	if (g_chdir (modeldir)) {
+		fprintf (stderr, "Failed to change directory to %s.", modeldir);
+
+		return -1;
+	}
 
 	path = g_strconcat(modeldir, "/arctic20.txt", NULL);
 	if (!g_file_test (path, G_FILE_TEST_EXISTS)) {
@@ -106,21 +96,21 @@ int main(int argc, char *argv[]) {
 		g_file_set_contents (path, arctic20_txt, -1, NULL);
 	}
 
-	if (!g_file_get_contents (path, &contents, NULL, NULL)) {
-		g_free(path);
-
+	if (!g_file_get_contents (path, &contents, NULL, &error)) {
 		window = gtk_message_dialog_new (NULL, 0, GTK_MESSAGE_ERROR,
 				GTK_BUTTONS_NONE,
-				"Error loading training data");
+				"Error loading training data: %s",
+				error->message);
 		gtk_dialog_run(GTK_DIALOG(window));
 	} else {
-		g_free(path);
 		lines = g_strsplit(contents, "\n", 0);
 
 		next (NULL, NULL);
 		gtk_main ();
 		sphinx_gui_config_save();
 	}
+
+	g_free(path);
 
 	return 0;
 }
