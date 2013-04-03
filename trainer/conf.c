@@ -58,7 +58,10 @@ void sphinx_gui_config_load () {
 	if (hmmdir == NULL)
 		hmmdir = g_strdup(HMMDIR);
 
-	if (!g_file_test (newmodeldir, G_FILE_TEST_EXISTS)) {
+	from = g_strconcat(newmodeldir, "/sendump", NULL);
+
+	if (!g_file_test (from, G_FILE_TEST_EXISTS)) {
+		g_free (from);
 		from = g_strdup(modeldir);
 
 		g_mkdir_with_parents (newmodeldir, 0700);
@@ -89,12 +92,12 @@ void sphinx_gui_config_load () {
 			gtk_main_quit();
 		}
 
-		g_free (from);
 		g_free (modeldir);
 
 		modeldir = g_strconcat(newmodeldir, NULL);
 	}
 
+	g_free (from);
 	g_free (newmodeldir);
 	g_key_file_free (key_file);
 }

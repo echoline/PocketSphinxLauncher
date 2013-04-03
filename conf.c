@@ -9,6 +9,7 @@ extern char *lmdict;
 float progress = 0.0;
 GtkWidget *trainwindow = NULL;
 
+void sphinx_gui_config_load ();
 void sphinx_gui_config_save ();
 
 void editable_changed (GtkEditable *editable, gpointer *var) {
@@ -71,6 +72,8 @@ cb_child_watch( GPid  pid,
 		gpointer listen_stuff) {
 	if (trainwindow != NULL) {
 		gtk_widget_destroy (trainwindow);
+
+		sphinx_gui_config_load ();
 	}
 
 	sphinx_gui_listen (listen_stuff);
