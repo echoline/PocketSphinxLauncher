@@ -1,8 +1,6 @@
-See Makefiles for build configuration.
+See defs.mk for build configuration.
 
 PocketSphinxLauncher is the main program.
-
-PSTrainer.sh must also have its dependencies satisfied.  See the script for details, they are a few programs mostly from sphinxtrain.
 
 Requirements:
 	Gtk+-3.0
