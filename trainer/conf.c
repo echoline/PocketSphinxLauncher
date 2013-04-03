@@ -52,27 +52,21 @@ void sphinx_gui_config_load () {
 	if (modeldir == NULL)
 		modeldir = g_strdup(MODELDIR);
 
-	newmodeldir = g_strconcat(g_get_user_config_dir(), "/pslauncher", NULL);
+	newmodeldir = g_strconcat(g_get_user_config_dir(), "/pslauncher",
+		       			"/model", NULL);
 
 	if (hmmdir == NULL)
 		hmmdir = g_strdup(HMMDIR);
-
-	if (lmdump == NULL)
-		lmdump = g_strdup(LMDUMP);
-
-	if (lmdict == NULL)
-		lmdict = g_strdup(LMDICT);
 
 	if (!g_file_test (newmodeldir, G_FILE_TEST_EXISTS)) {
 		from = g_strdup(modeldir);
 
 		g_mkdir_with_parents (newmodeldir, 0700);
 
-		if (g_chdir (newmodeldir)) {
+		if (g_chdir (newmodeldir) || g_chdir("..")) {
 			window = gtk_message_dialog_new (NULL, 0,
 				GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
-				"Failed to change directory to %s.",
-				newmodeldir);
+				"Failed to change directory.");
 
 			gtk_dialog_run (GTK_DIALOG (window));
 			gtk_main_quit ();
@@ -96,8 +90,9 @@ void sphinx_gui_config_load () {
 		}
 
 		g_free (from);
+		g_free (modeldir);
 
-		modeldir = g_strconcat(newmodeldir, "/model", NULL);
+		modeldir = g_strconcat(newmodeldir, NULL);
 	}
 
 	g_free (newmodeldir);

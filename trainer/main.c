@@ -31,9 +31,11 @@ char *lmdump = NULL;
 gchar **lines;
 gchar *wavfname = NULL;
 
-void lastdestroyed() {
+gboolean lastdestroyed(gpointer __unused) {
 	train_go();
 	gtk_main_quit();
+
+	return FALSE;
 }
 
 void next(GtkButton *button, gpointer __unused) {
@@ -50,7 +52,8 @@ void next(GtkButton *button, gpointer __unused) {
 		doone(lines[lineindex-1]);
 	}
 	else {
-		lastdestroyed();
+		gtk_widget_hide (window);
+		g_idle_add (lastdestroyed, NULL);
 	}
 }
 

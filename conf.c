@@ -37,6 +37,8 @@ cb_out_watch( GIOChannel   *channel,
 					g_strtod (&string[8], NULL));
 	}
 
+	printf ("%s", string);
+
 	g_free( string );
 
 	return( TRUE );

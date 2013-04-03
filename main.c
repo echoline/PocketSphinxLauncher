@@ -92,6 +92,8 @@ int main(int argc, char *argv[]) {
 	g_signal_connect(button, "clicked", G_CALLBACK(sphinx_gui_configure),
 							&listen_stuff);
 	gtk_box_pack_start (GTK_BOX(vbox), hbox, FALSE, TRUE, 2);
+	gtk_widget_set_sensitive (button, FALSE);
+	listen_stuff.confbutton = button;
 
 	listen_stuff.tray = gtk_status_icon_new_from_stock("gtk-no");
 	g_signal_connect(listen_stuff.tray, "activate",

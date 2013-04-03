@@ -32,12 +32,13 @@ train_go () {
 		  "./mdef.txt", NULL },
 		{ "/usr/local/libexec/sphinxtrain/bw", "-hmmdir", hmmdir,
 		  "-moddeffn", "./mdef.txt",
-		  "-ts2cbfn", ".semi.", "-feat", "1s_c_d_dd", "-svspec",
-		  "0-12/13-25/26-38", "-cmn", "current", "-agc", "none",
+		  "-ts2cbfn", ".cont.", "-feat", "1s_c_d_dd", 
+		  //"-svspec", "0-12/13-25/26-38",
+		  "-cmn", "current", "-agc", "none",
 		  "-dictfn", "arctic20.dic", "-ctlfn", "arctic20.listoffiles",
 		  "-lsnfn", "arctic20.transcription", "-accumdir", ".", NULL },
 		{ "/usr/local/libexec/sphinxtrain/mllr_solve", "-meanfn",
-		  "means", "-varfn", hmmvariances,
+		  hmmmeans, "-varfn", hmmvariances,
 		  "-outmllrfn", "mllr_matrix", "-accumdir", ".", NULL },
 		{ "/usr/local/libexec/sphinxtrain/map_adapt", "-meanfn",
 		  hmmmeans, "-varfn",
@@ -62,6 +63,7 @@ train_go () {
 
 	for (step = 0; step < steps; step++) {
 		printf ("PROGRESS%f\n", train_progress(steps));
+		fflush (stdout);
 
 		g_spawn_sync (NULL, train_programs[step], NULL,
 				G_SPAWN_SEARCH_PATH, NULL, NULL, NULL, NULL,

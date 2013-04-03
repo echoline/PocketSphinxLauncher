@@ -95,6 +95,8 @@ gboolean sphinx_gui_listen_timeout(gpointer arg) {
 					"gtk-yes", GTK_ICON_SIZE_MENU);
 			gtk_status_icon_set_from_stock(
 					listen_stuff->tray, "gtk-yes");
+			gtk_widget_set_sensitive (listen_stuff->confbutton,
+							TRUE);
 		} else if (!strncasecmp(buf, "Listening", 9)) {
 			gtk_image_set_from_stock(
 					GTK_IMAGE(listen_stuff->status),
