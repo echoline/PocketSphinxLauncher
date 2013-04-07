@@ -41,7 +41,8 @@ int main(int argc, char *argv[]) {
 	sphinx_gui_listen_t listen_stuff;
 	int i;
 
-	fprintf (stderr, "%s Copyright (C) 2013 Eli Cohen\n", argv[0]);
+	fprintf (stderr, "PocketSphinx Copyright (c) 1999-2010 Carnegie Mellon University.\n", argv[0]);
+	fprintf (stderr, "%s Copyright (c) 2013 Eli Cohen\n", argv[0]);
 
 	for (i = 0; i < argc; i++) {
 		if (!g_strcmp0(argv[i], "-adcdev")) {
