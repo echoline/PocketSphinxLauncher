@@ -108,6 +108,10 @@ gboolean sphinx_gui_listen_timeout(gpointer arg) {
 				gtk_label_set_text(
 					GTK_LABEL(listen_stuff->label), ptr);
 
+				gtk_status_icon_set_tooltip_text (
+							listen_stuff->tray,
+							ptr);
+
 				model = gtk_tree_view_get_model(
 					GTK_TREE_VIEW(listen_stuff->list));
 				gtk_tree_model_foreach(model, find_by_phrase,

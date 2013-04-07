@@ -210,6 +210,21 @@ void sphinx_gui_config_save () {
 	g_free(conf);
 }
 
+void sphinx_gui_closed (sphinx_gui_listen_t *listen_stuff) {
+/*	TODO segfaults
+	void *res;
+
+	gtk_image_set_from_stock(GTK_IMAGE(listen_stuff->status), "gtk-no",
+							GTK_ICON_SIZE_MENU);
+	gtk_status_icon_set_from_stock(listen_stuff->tray, "gtk-no");
+	pthread_cancel (listen_stuff->thread);
+	pthread_join (listen_stuff->thread, &res);
+
+	if (res == PTHREAD_CANCELED) {
+		sphinx_gui_listen (listen_stuff);
+	} */
+}
+
 void sphinx_gui_configure(GtkWidget* configbutton, gpointer listen_stuff) {
 	GtkWidget *label;
 	GtkWidget *entry;
@@ -278,5 +293,7 @@ void sphinx_gui_configure(GtkWidget* configbutton, gpointer listen_stuff) {
 	gtk_box_pack_start (GTK_BOX(vbox), hbox, FALSE, TRUE, 2);
 	gtk_container_add (GTK_CONTAINER (window), vbox);
 
+	g_signal_connect (window, "destroy", G_CALLBACK(sphinx_gui_closed),
+			listen_stuff);
 	gtk_widget_show_all (window);
 }

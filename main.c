@@ -56,6 +56,7 @@ int main(int argc, char *argv[]) {
 	gtk_init (&argc, &argv);
 
 	sphinx_gui_config_load();
+	sphinx_gui_config_save();
 
 	listen_stuff.window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
 	g_signal_connect (listen_stuff.window, "destroy", gtk_main_quit, NULL);
@@ -98,8 +99,11 @@ int main(int argc, char *argv[]) {
 	g_signal_connect(listen_stuff.tray, "activate",
 			G_CALLBACK(sphinx_gui_visibility), &listen_stuff);
 
-	if (!sphinx_gui_listen(&listen_stuff))
-		return -1;
+	if (!sphinx_gui_listen(&listen_stuff)) {
+		listen_stuff.status = gtk_image_new_from_stock("gtk-no",
+							GTK_ICON_SIZE_MENU);
+		listen_stuff.tray = gtk_status_icon_new_from_stock("gtk-no");
+	}
 
 	g_timeout_add(1, &sphinx_gui_listen_timeout, &listen_stuff);
 
