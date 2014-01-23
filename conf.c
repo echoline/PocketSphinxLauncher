@@ -81,7 +81,7 @@ cb_child_watch( GPid  pid,
 
 void
 train_clicked (GtkButton *button, gpointer arg) {
-	gchar *args[] = { "PocketSphinxTrainer", adcdev, NULL };
+	gchar *args[] = { "/usr/local/bin/PocketSphinxTrainer", adcdev, NULL };
 	gint out, err;
 	GIOChannel *out_ch, *err_ch;
 	GtkWidget *box;
@@ -210,19 +210,21 @@ void sphinx_gui_config_save () {
 	g_free(conf);
 }
 
-void sphinx_gui_closed (sphinx_gui_listen_t *listen_stuff) {
-/*	TODO segfaults
+void sphinx_gui_closed (GtkWidget *ignored, sphinx_gui_listen_t *listen_stuff)
+{
 	void *res;
 
 	gtk_image_set_from_stock(GTK_IMAGE(listen_stuff->status), "gtk-no",
 							GTK_ICON_SIZE_MENU);
 	gtk_status_icon_set_from_stock(listen_stuff->tray, "gtk-no");
-	pthread_cancel (listen_stuff->thread);
-	pthread_join (listen_stuff->thread, &res);
+	if (pthread_cancel (listen_stuff->thread) != 0)
+		perror ("pthread_cancel");
+	if (pthread_join (listen_stuff->thread, &res) != 0)
+		perror ("pthread_join");
 
 	if (res == PTHREAD_CANCELED) {
 		sphinx_gui_listen (listen_stuff);
-	} */
+	}
 }
 
 void sphinx_gui_configure(GtkWidget* configbutton, gpointer listen_stuff) {

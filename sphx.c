@@ -125,7 +125,7 @@ recognize_from_microphone(int outfd)
 
     if ((ad = ad_open_dev(adcdev,
                           (int)cmd_ln_float32_r(config, "-samprate"))) == NULL)
-        E_FATAL("Failed top open audio device\n");
+        E_FATAL("Failed to open audio device\n");
 
     /* Initialize continuous listening module */
     if ((cont = cont_ad_init(ad, ad_read)) == NULL)
@@ -207,13 +207,8 @@ recognize_from_microphone(int outfd)
 
     cont_ad_close(cont);
     ad_close(ad);
-}
 
-static void
-cleanup_handler (void *arg)
-{
-    cont_ad_close(cont);
-    ad_close(ad);
+    fprintf (stderr, "listen thread exiting\n");
 }
 
 void*
@@ -224,8 +219,6 @@ sphinx_gui_listen_main(void *arg)
     char hmm[256];
     char lm[256];
     char dict[256];
-
-    pthread_cleanup_push(cleanup_handler, NULL);    
 
     snprintf(hmm, 256, "%s/%s", modeldir, hmmdir);
     snprintf(lm, 256, "%s/%s", modeldir, lmdump);
@@ -245,8 +238,6 @@ sphinx_gui_listen_main(void *arg)
     recognize_from_microphone(outfd);
 
     ps_free(ps);
-
-    pthread_cleanup_pop(0);
 
     return NULL;
 }

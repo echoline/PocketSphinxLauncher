@@ -33,8 +33,11 @@ gboolean sphinx_gui_listen(sphinx_gui_listen_t *listen_stuff) {
 	val = fcntl(listen_stuff->fd, F_GETFL, 0); 
 	fcntl(listen_stuff->fd, F_SETFL, val | O_NONBLOCK);
 
-	pthread_create(&listen_stuff->thread, NULL, sphinx_gui_listen_main, (void*)pfd[1]);
+	val = pthread_create(&listen_stuff->thread, NULL, sphinx_gui_listen_main, (void*)pfd[1]);
+	if (val != 0)
+		perror ("pthread_create");
 
+	fprintf (stderr, "thread created\n");
 	return TRUE;
 }
 
