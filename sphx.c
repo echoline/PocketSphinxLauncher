@@ -78,7 +78,7 @@
 
 #include <pocketsphinx.h>
 
-extern char *adcdev;
+//extern char *adcdev;
 extern char *modeldir;
 extern char *hmmdir;
 extern char *lmdump;
@@ -123,7 +123,7 @@ recognize_from_microphone(int outfd)
     char const *uttid;
     char word[4096];
 
-    if ((ad = ad_open_dev(adcdev,
+    if ((ad = ad_open_dev(NULL,
                           (int)cmd_ln_float32_r(config, "-samprate"))) == NULL)
         E_FATAL("Failed to open audio device\n");
 

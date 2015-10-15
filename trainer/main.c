@@ -22,7 +22,7 @@ GtkWidget *window;
 GtkWidget *playbutton;
 GtkWidget *stopbutton;
 GtkWidget *recordbutton;
-char *adcdev = NULL;
+//char *adcdev = NULL;
 char *modeldir = NULL;
 char *hmmdir = NULL;
 char *lmdict = NULL;
@@ -66,8 +66,8 @@ int main(int argc, char *argv[]) {
 	gchar *contents;
 	gchar *path;
 
-	if (argc > 1)
-		adcdev = g_strdup(argv[1]);
+//	if (argc > 1)
+//		adcdev = g_strdup(argv[1]);
 
 	fprintf (stderr, "PocketSphinx Copyright (c) 1999-2013 Carnegie Mellon University.\n", argv[0]);
 	fprintf (stderr, "%s Copyright (c) 2013 Eli Cohen\n", argv[0]);
@@ -81,22 +81,26 @@ int main(int argc, char *argv[]) {
 		return -1;
 	}
 
+	path = g_strconcat(modeldir, "/arctic20.dic", NULL);
+	if (!g_file_test (path, G_FILE_TEST_EXISTS)) {
+		g_file_set_contents (path, arctic20_dic, -1, NULL);
+	}
+	g_free (path);
+
+	path = g_strconcat(modeldir, "/arctic20.listoffiles", NULL);
+	if (!g_file_test (path, G_FILE_TEST_EXISTS)) {
+		g_file_set_contents (path, arctic20_listoffiles, -1, NULL);
+	}
+	g_free (path);
+
+	path = g_strconcat(modeldir, "/arctic20.transcription", NULL);
+	if (!g_file_test (path, G_FILE_TEST_EXISTS)) {
+		g_file_set_contents (path, arctic20_transcription, -1, NULL);
+	}
+	g_free (path);
+
 	path = g_strconcat(modeldir, "/arctic20.txt", NULL);
 	if (!g_file_test (path, G_FILE_TEST_EXISTS)) {
-		g_free (path);
-		path = g_strconcat(modeldir, "/arctic20.dic", NULL);
-		g_file_set_contents (path, arctic20_dic, -1, NULL);
-
-		g_free (path);
-		path = g_strconcat(modeldir, "/arctic20.listoffiles", NULL);
-		g_file_set_contents (path, arctic20_listoffiles, -1, NULL);
-
-		g_free (path);
-		path = g_strconcat(modeldir, "/arctic20.transcription", NULL);
-		g_file_set_contents (path, arctic20_transcription, -1, NULL);
-
-		g_free (path);
-		path = g_strconcat(modeldir, "/arctic20.txt", NULL);
 		g_file_set_contents (path, arctic20_txt, -1, NULL);
 	}
 

@@ -1,7 +1,7 @@
 #include <gtk/gtk.h>
 #include "dat.h"
 
-extern char *adcdev;
+//extern char *adcdev;
 extern char *modeldir;
 extern char *hmmdir;
 extern char *lmdump;
@@ -81,7 +81,7 @@ cb_child_watch( GPid  pid,
 
 void
 train_clicked (GtkButton *button, gpointer arg) {
-	gchar *args[] = { "/usr/local/bin/PocketSphinxTrainer", adcdev, NULL };
+	gchar *args[] = { "/usr/local/bin/PocketSphinxTrainer", NULL };
 	gint out, err;
 	GIOChannel *out_ch, *err_ch;
 	GtkWidget *box;
@@ -130,6 +130,7 @@ train_clicked (GtkButton *button, gpointer arg) {
 
 		gtk_dialog_run(GTK_DIALOG(box));
 	}
+	sphinx_gui_listen (listen_stuff);
 }
 
 void sphinx_gui_config_load () {
@@ -139,10 +140,10 @@ void sphinx_gui_config_load () {
 				NULL);
 
 	if (g_key_file_load_from_file (key_file, conf, 0, NULL)) {
-		if (adcdev != NULL)
-			g_free(adcdev);
-		adcdev = g_key_file_get_string(key_file, "pslauncher",
-						"adcdev", NULL);
+//		if (adcdev != NULL)
+//			g_free(adcdev);
+//		adcdev = g_key_file_get_string(key_file, "pslauncher",
+//						"adcdev", NULL);
 
 		if (modeldir != NULL)
 			g_free(modeldir);
@@ -164,7 +165,7 @@ void sphinx_gui_config_load () {
 		lmdict = g_key_file_get_string(key_file, "pslauncher",
 						"lmdict", NULL);
 	} else {
-		adcdev = g_strdup("default");
+//		adcdev = g_strdup("default");
 		modeldir = g_strdup(MODELDIR);
 		hmmdir = g_strdup(HMMDIR);
 		lmdump = g_strdup(LMDUMP);
@@ -188,8 +189,8 @@ void sphinx_gui_config_save () {
 				"/pslauncher/config.ini",
 				NULL);
 
-	if (adcdev != NULL)
-		g_key_file_set_string (key_file, "pslauncher", "adcdev", adcdev);
+//	if (adcdev != NULL)
+//		g_key_file_set_string (key_file, "pslauncher", "adcdev", adcdev);
 
 	if (modeldir != NULL)
 		g_key_file_set_string (key_file, "pslauncher", "modeldir", modeldir);
@@ -235,15 +236,16 @@ void sphinx_gui_configure(GtkWidget* configbutton, gpointer listen_stuff) {
 	GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	GtkWidget *vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 1);
 
-	GtkWidget *hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 1);
-	label = gtk_label_new ("ALSA Device");
-	gtk_box_pack_start (GTK_BOX (hbox), label, TRUE, TRUE, 2);
-	entry = gtk_entry_new();
-	g_signal_connect(entry, "changed", G_CALLBACK (editable_changed), &adcdev);
-	if (adcdev != NULL)
-		gtk_entry_set_text (GTK_ENTRY (entry), adcdev);
-	gtk_box_pack_start (GTK_BOX (hbox), entry, TRUE, FALSE, 2);
-	gtk_box_pack_start (GTK_BOX(vbox), hbox, TRUE, TRUE, 2);
+	GtkWidget *hbox;
+// = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 1);
+//	label = gtk_label_new ("ALSA Device");
+//	gtk_box_pack_start (GTK_BOX (hbox), label, TRUE, TRUE, 2);
+//	entry = gtk_entry_new();
+//	g_signal_connect(entry, "changed", G_CALLBACK (editable_changed), &adcdev);
+//	if (adcdev != NULL)
+//		gtk_entry_set_text (GTK_ENTRY (entry), adcdev);
+//	gtk_box_pack_start (GTK_BOX (hbox), entry, TRUE, FALSE, 2);
+//	gtk_box_pack_start (GTK_BOX(vbox), hbox, TRUE, TRUE, 2);
 
 	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 1);
 	label = gtk_label_new ("Model Directory");

@@ -18,7 +18,7 @@
 #include "dat.h"
 #include "fns.h"
 
-char *adcdev = NULL;
+//char *adcdev = NULL;
 char *modeldir = NULL;
 char *hmmdir = NULL;
 char *lmdump = NULL;
@@ -44,14 +44,14 @@ int main(int argc, char *argv[]) {
 	fprintf (stderr, "PocketSphinx Copyright (c) 1999-2013 Carnegie Mellon University.\n", argv[0]);
 	fprintf (stderr, "%s Copyright (c) 2013 Eli Cohen\n", argv[0]);
 
-	for (i = 0; i < argc; i++) {
-		if (!g_strcmp0(argv[i], "-adcdev")) {
-			i++;
+//	for (i = 0; i < argc; i++) {
+//		if (!g_strcmp0(argv[i], "-adcdev")) {
+//			i++;
 
-			if (i < argc)
-				adcdev = g_strdup(argv[i]);
-		}
-	}
+//			if (i < argc)
+//				adcdev = g_strdup(argv[i]);
+//		}
+//	}
 
 	gtk_init (&argc, &argv);
 

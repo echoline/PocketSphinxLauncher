@@ -1,6 +1,6 @@
 #include <gtk/gtk.h>
 
-extern char *adcdev;
+//extern char *adcdev;
 extern char *modeldir;
 extern char *hmmdir;
 extern char *lmdump;
@@ -20,10 +20,10 @@ void sphinx_gui_config_load () {
 	gchar *newmodeldir;
 
 	if (g_key_file_load_from_file (key_file, conf, 0, NULL)) {
-		if (adcdev != NULL)
-			g_free(adcdev);
-		adcdev = g_key_file_get_string(key_file, "pslauncher",
-						"adcdev", NULL);
+//		if (adcdev != NULL)
+//			g_free(adcdev);
+//		adcdev = g_key_file_get_string(key_file, "pslauncher",
+//						"adcdev", NULL);
 
 		if (modeldir != NULL)
 			g_free(modeldir);
@@ -46,8 +46,8 @@ void sphinx_gui_config_load () {
 						"lmdict", NULL);
 	}
 
-	if (adcdev == NULL)
-		adcdev = g_strdup("default");
+//	if (adcdev == NULL)
+//		adcdev = g_strdup("default");
 
 	if (modeldir == NULL)
 		modeldir = g_strdup(MODELDIR);
@@ -116,9 +116,9 @@ void sphinx_gui_config_save () {
 				"/pslauncher/config.ini",
 				NULL);
 
-	if (adcdev != NULL)
-		g_key_file_set_string (key_file, "pslauncher", "adcdev",
-					adcdev);
+//	if (adcdev != NULL)
+//		g_key_file_set_string (key_file, "pslauncher", "adcdev",
+//					adcdev);
 	
 	if (modeldir != NULL)
 		g_key_file_set_string (key_file, "pslauncher", "modeldir",

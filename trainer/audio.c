@@ -5,11 +5,11 @@ extern GtkWidget *window;
 extern GtkWidget *playbutton;
 extern GtkWidget *stopbutton;
 extern GtkWidget *recordbutton;
-extern char *adcdev;
+//extern char *adcdev;
 extern char *wavfname;
 
 void record(GtkButton *button, gpointer __unused) {
-	gchar *args[] = { "arecord", "-D", adcdev, "-r", "16000", "-f",
+	gchar *args[] = { "arecord", "-r", "16000", "-f",
 		"S16_LE", "-t", "wav", wavfname, NULL };
 	GError *error = NULL;
 
