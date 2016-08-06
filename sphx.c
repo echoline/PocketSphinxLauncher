@@ -124,7 +124,7 @@ recognize_from_microphone(int outfd)
     char word[4096];
 
     if ((ad = ad_open_dev(NULL,
-                          (int)cmd_ln_float32_r(config, "-samprate"))) == NULL)
+                          (int)cmd_ln_float32_r(config, "-adcdev"))) == NULL)
         E_FATAL("Failed to open audio device\n");
 
     /* Initialize continuous listening module */

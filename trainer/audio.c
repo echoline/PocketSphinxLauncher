@@ -110,7 +110,7 @@ void doone(char *text) {
 	hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 2);
 	button = gtk_button_new_from_stock (GTK_STOCK_GO_FORWARD);
 	g_signal_connect(stopbutton, "clicked", G_CALLBACK(stop), button);
-	gtk_widget_set_sensitive (button, FALSE);
+//	gtk_widget_set_sensitive (button, FALSE);
 	g_signal_connect(button, "clicked", G_CALLBACK(next), NULL);
 	gtk_box_pack_start (GTK_BOX (hbox), button, TRUE, FALSE, 2);
 
