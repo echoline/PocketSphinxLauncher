@@ -128,7 +128,7 @@ recognize_from_microphone(int outfd)
 
     if (ad_start_rec(ad) < 0)
         E_FATAL("Failed to start recording\n");
-    if (ps_start_utt(ps, NULL) < 0)
+    if (ps_start_utt(ps) < 0)
         E_FATAL("Failed to start utterance\n");
 
     utt_started = FALSE;
